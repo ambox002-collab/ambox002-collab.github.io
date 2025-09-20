@@ -1,2 +1,562 @@
 <h1>Quiz 1 - Head & Neck Lecture 3</h1>
-<p>Questions coming soon!</p>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lens Neutralization Quiz — Parts 1 & 2 + Summary</title>
+<style>
+  :root{--bg:#071422;--card:#0b1520;--accent:#06b6d4;--muted:#9fb7bf;--ok:#10b981;--bad:#ef4444}
+  body{font-family:Inter,system-ui,Arial; margin:0; background:linear-gradient(180deg,#021319,#071422); color:#e6f7fb}
+  header{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.03); display:flex; align-items:center; gap:12px;}
+  h1{margin:0;font-size:1.05rem}
+  .container{max-width:1100px;margin:18px auto;padding:18px}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:10px; padding:16px; box-shadow:0 8px 24px rgba(2,6,23,0.6); margin-bottom:14px}
+  .small{color:var(--muted); font-size:0.92rem}
+  .row{display:flex; gap:12px;flex-wrap:wrap}
+  .svg-wrap{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); padding:12px; border-radius:8px; text-align:center}
+  button{background:var(--accent); color:#012; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700}
+  button.secondary{background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted)}
+  .option{display:block; margin:10px 0; padding:10px; border-radius:8px; background:rgba(255,255,255,0.01); cursor:pointer; border:1px solid rgba(255,255,255,0.02)}
+  .option:hover{background:rgba(255,255,255,0.02)}
+  .option input{margin-right:8px}
+  .feedback{margin-top:10px;padding:12px;border-radius:8px}
+  .feedback.ok{background:rgba(16,185,129,0.10); border:1px solid rgba(16,185,129,0.18); color:var(--ok)}
+  .feedback.bad{background:rgba(239,68,68,0.08); border:1px solid rgba(239,68,68,0.16); color:var(--bad)}
+  .explain{font-size:0.95rem; color:var(--muted); margin-top:8px}
+  .kbd{background:#021a23;padding:6px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.02);font-weight:700}
+  footer{padding:12px;text-align:center;color:var(--muted); font-size:0.9rem}
+  nav{display:flex;gap:8px;flex-wrap:wrap}
+  .progress{font-size:0.95rem;color:var(--muted)}
+  .summary-list{background:#02121a;padding:10px;border-radius:8px}
+  pre{background:#02111a;padding:12px;border-radius:8px;overflow:auto}
+</style>
+</head>
+<body>
+<header>
+  <div style="width:44px;height:44px;border-radius:8px;background:linear-gradient(180deg,#065f66,#0284c7);display:flex;align-items:center;justify-content:center;font-weight:800">LN</div>
+  <div>
+    <h1>Lens Neutralization — Interactive Quiz</h1>
+    <div class="small">Parts 1 (Hand Neutralization) & 2 (Lensometry) — 20 MCQs each, instant feedback and explanations, summary at the end.</div>
+  </div>
+</header>
+
+<main class="container">
+  <!-- Menu -->
+  <div id="menu" class="card">
+    <h2 style="margin:6px 0">Choose a part</h2>
+    <div class="small" style="margin-bottom:10px">Select which topic to study — questions are in the fixed order (not randomized).</div>
+    <nav>
+      <button onclick="startPart(1)">Part 1 — Hand Neutralization (20 MCQs)</button>
+      <button onclick="startPart(2)">Part 2 — Lensometry (20 MCQs)</button>
+      <button onclick="showHelp()" class="secondary">Help / How to use</button>
+    </nav>
+  </div>
+
+  <!-- Quiz area -->
+  <div id="quizArea"></div>
+
+  <!-- Navigation -->
+  <div id="navRow" style="display:none; text-align:center; margin-top:12px">
+    <button id="prevBtn" class="secondary" onclick="prevQ()" disabled>Previous</button>
+    <button id="checkBtn" onclick="checkAnswer()">Check answer</button>
+    <button id="nextBtn" onclick="nextQ()">Next</button>
+    <div style="margin-top:8px" class="progress" id="prog">Question</div>
+  </div>
+
+  <!-- Summary -->
+  <div id="summaryArea" style="display:none" class="card"></div>
+
+  <footer class="card">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+      <div>
+        <strong>Study tips</strong> — Practice the manual maneuvers in lab (hand neutralization & lensometer). Use the explanations to correct mistakes.
+      </div>
+      <div style="text-align:right">
+        <div class="small">Made from: Lens Neutralization — Rachel Brackley, OD, FAAO (Fall 2025).</div>
+      </div>
+    </div>
+  </footer>
+</main>
+
+<script>
+/* ===========================
+   Question banks for Part 1 (Hand Neutralization)
+   (20 MCQs — same as earlier delivered)
+   =========================== */
+const part1 = [
+  { q: "1) You pick up an unknown spectacle lens and, when moving the lens, the image moves in the same direction as the lens. What does 'with motion' indicate about the spectacle lens?",
+    choices: ["It is a plus lens (magnifying); neutralize with a minus trial lens.",
+              "It is a minus lens (minifying); neutralize with a plus trial lens.",
+              "It is a plano lens (no power); no neutralization needed.",
+              "It indicates significant prism; handle as prism rather than power."],
+    correct: 1,
+    explanation: "With motion = image moves with the lens → lens minifies → behaves as a minus spectacle lens. To neutralize a minus spectacle lens you add a plus trial lens until neutrality."
+  },
+  { q: "2) 'Against motion' is seen during hand neutralization. Which statement is true?",
+    choices: ["Against motion means the spectacle lens is minus and you neutralize with plus lenses.",
+              "Against motion means the spectacle lens is plus and you neutralize with minus lenses.",
+              "Against motion indicates the lens is rotated and is spherical.",
+              "Against motion indicates the optical center has been found."],
+    correct: 1,
+    explanation: "Against motion = image moves opposite the lens movement → lens magnifies → spectacle lens is plus. You neutralize a plus spectacle lens with minus trial lenses."
+  },
+  { q: "3) When neutralizing meridians of a spherocylindrical lens by hand, how should you treat each principal meridian?",
+    choices: ["As a single spherical lens; neutralize each separately with spherical trial lenses.",
+              "As two prisms; neutralize with prism bars instead of spherical lenses.",
+              "You should only neutralize one meridian — the other is automatic.",
+              "Use cylindrical trial lenses only for each meridian."],
+    correct: 0,
+    explanation: "Each principal meridian acts like a spherical lens at that meridian. You neutralize each separately using spherical trial lenses (not cylindrical) to build the optical cross."
+  },
+  { q: "4) When neutralizing the horizontal principal meridian (closest to 180°), what movement and target should you use?",
+    choices: ["Move the lens up and down using a horizontal target.",
+              "Move the lens side-to-side using a vertical target.",
+              "Rotate the lens clockwise with any target.",
+              "Move the lens diagonally using a near target only."],
+    correct: 1,
+    explanation: "The horizontal meridian is neutralized by moving the lens side-to-side (perpendicular to the horizontal meridian) while using a vertical target so the motion is visible."
+  },
+  { q: "5) You rotate an unknown lens and observe that the image inside the lens rotates with the lens. What does that tell you?",
+    choices: ["The lens is spherocylindrical (astigmatic).",
+              "The lens is spherical (same power in all meridians).",
+              "The lens has prism only.",
+              "The lens is broken and should not be used."],
+    correct: 1,
+    explanation: "If the image rotates together with the lens, the lens is spherical (it has the same power in all meridians). If the image does not rotate, the lens is spherocylindrical."
+  },
+  { q: "6) You marked a meridian on a spectacle lens and placed the glasses on a protractor. The marked meridian reads 031°. What is the other principal meridian?",
+    choices: ["031° (same — both are identical).",
+              "121° (add 90° to 031°).",
+              "211° (subtract 180°).",
+              "059° (mirror across 090°)."],
+    correct: 1,
+    explanation: "Principal meridians are 90° apart. Adding 90° to 031° gives 121° — the orthogonal principal meridian."
+  },
+  { q: "7) After marking the vertical meridian at 070°, you observe 'against' motion when moving the lens up & down (vertical target) and neutralize it with a -0.75D spherical trial lens. What is the power of that vertical meridian?",
+    choices: ["−0.75 D", "+0.75 D", "Planimetric — 0.00 D", "Cannot tell without lensometer"],
+    correct: 1,
+    explanation: "Neutralized with a −0.75 trial lens means the spectacle meridian was +0.75 D (a plus meridian was neutralized by adding minus). 'Against' motion indicates a plus spectacle meridian."
+  },
+  { q: "8) While neutralizing a spherocylindrical lens you see 'with' motion in one meridian and 'against' motion in the other. Which of the following is true?",
+    choices: ["Both meridians must be minus powers.",
+              "One meridian is minus and the other is plus.",
+              "The lens is plano in one meridian and cylinder in the other.",
+              "This can’t happen — both meridians must show same motion."],
+    correct: 1,
+    explanation: "With motion indicates a minus spectacle meridian; against motion indicates a plus spectacle meridian. Therefore one meridian behaves minus, the other plus — common in spherocylindrical lenses."
+  },
+  { q: "9) You marked a meridian that reads 104°. Using a horizontal target you see 'with' motion and neutralized with +1.25D. Using a vertical target you see 'against' motion and neutralized with −1.50D. Which Rx matches these findings?",
+    choices: ["+1.25 -1.50 x 104", "-1.50 -1.25 x 014", "+1.25 -2.75 x 014", "+1.25 -2.75 x 104"],
+    correct: 3,
+    explanation: "Horizontal target (with motion) neutralized with +1.25 → spectacle horizontal meridian = −1.25 (with motion = minus spectacle neutralized with plus trial). Vertical neutralized with −1.50 (against) → spectacle vertical = +1.50. More plus meridian is +1.50 (vertical); sphere = +1.50; cylinder = other meridian − sphere = (−1.25) − (+1.50) = −2.75; axis = meridian of sphere = 104°. Final Rx: +1.50 −2.75 x 104."
+  },
+  { q: "10) When hand-neutralizing, why is it recommended to mark only one meridian (not both)?",
+    choices: ["Because marking both will damage the lens surface.",
+              "Because marking both can lead to mixing up which meridian corresponds to which neutralization.",
+              "Because two marks change the optical power.",
+              "Because protractors only read one mark at a time."],
+    correct: 1,
+    explanation: "Marking both meridians increases the chance of confusion — you might swap which neutralization reading belongs to which meridian. Mark one, find its axis, and the other will be 90° away."
+  },
+  { q: "11) During hand neutralization you should hold the glasses with temples away from you. Why?",
+    choices: ["It aligns the optical center with your eye for retinoscopy.",
+              "It ensures the correct orientation so trial lenses are placed on top consistently and axes/protractor readings match standard orientation.",
+              "So the patient can see through the back surface.",
+              "Temples away make the lensometry easier later."],
+    correct: 1,
+    explanation: "Temples away is the standard orientation for hand neutralization and lensometry — it ensures consistent orientation for reading axes and placing trial lenses; it also matches how protractors are used."
+  },
+  { q: "12) You neutralize the vertical meridian (marked) by moving the lens up and down and you observe 'with' motion neutralized by +2.00D. What is the spectacle power in that vertical meridian?",
+    choices: ["-2.00 D", "+2.00 D", "0.00 D (plano)", "Cannot deduce from information"],
+    correct: 0,
+    explanation: "With motion means the spectacle meridian is minus; it was neutralized by a +2.00 trial lens, so the spectacle meridian power is −2.00 D."
+  },
+  { q: "13) You determine the marked meridian reads 090°. While neutralizing that meridian you see 'with' motion neutralized with +1.00D. Which meridian (axis) will be used in the final Rx for the cylinder?",
+    choices: ["090° (marked meridian) or 180°, depending on which meridian is more plus when you finish constructing the optical cross.",
+              "Always 090°, because that's the marked meridian.",
+              "180°, because axes are always reported orthogonal to marks.",
+              "Axis is not used in spherocyl Rx."],
+    correct: 0,
+    explanation: "The axis in the final Rx may be either the marked meridian or the other one — you must determine both meridional powers and construct the optical cross. The axis is the meridian of the more plus power (when converting to minus-cylinder form)."
+  },
+  { q: "14) While neutralizing a lens you find: vertical meridian (marked) neutralizes with -0.50 (against motion) and horizontal neutralizes with +1.50 (with motion). What is the correct pair of meridional powers?",
+    choices: ["Vertical = -0.50, Horizontal = +1.50",
+              "Vertical = +0.50, Horizontal = -1.50",
+              "Vertical = +0.50, Horizontal = +1.50",
+              "Vertical = -0.50, Horizontal = -1.50"],
+    correct: 1,
+    explanation: "Vertical neutralized with −0.50 (against motion) means the spectacle vertical meridian was +0.50. Horizontal neutralized with +1.50 (with motion) means spectacle horizontal meridian was −1.50."
+  },
+  { q: "15) You hand-neutralize a lens and find the two principal meridians' spectacle powers are +1.00 and +2.50. To write the Rx in minus-cylinder form, what is the sphere and cylinder?",
+    choices: ["Sphere +1.00, Cylinder −1.50 x axis of +1.00 meridian.",
+              "Sphere +2.50, Cylinder −1.50 x axis of +2.50 meridian.",
+              "Sphere +1.00, Cylinder +1.50 x axis of +1.00 meridian.",
+              "Sphere +2.50, Cylinder +1.50 x axis of +2.50 meridian."],
+    correct: 1,
+    explanation: "In minus-cylinder form, sphere = the more plus meridian (+2.50). Cylinder = other meridian − sphere = +1.00 − (+2.50) = −1.50. Axis = meridian of the sphere (the more plus meridian). So sphere +2.50, cyl −1.50."
+  },
+  { q: "16) If you neutralize the vertical meridian by moving the lens up and down using a horizontal target, why is that movement perpendicular to the meridian?",
+    choices: ["Because meridians are measured diagonally and must be offset.",
+              "Because motion of image is best detected by moving the lens perpendicular to the meridian being tested.",
+              "Because moving parallel to the meridian would introduce prism only.",
+              "Because it's tradition — there is no optical reason."],
+    correct: 1,
+    explanation: "To detect motion of the target created by a particular meridian, move the lens perpendicular to that meridian — this maximizes the visible movement of the image associated with that meridian."
+  },
+  { q: "17) You mark a meridian, determine its axis with a protractor reads 075°. You neutralize vertical movement (meridian you marked) with +0.75 (with motion). What is the power in that meridian and the orthogonal meridian (if orthogonal was neutralized with −1.25 against motion)?",
+    choices: ["Marked meridian = −0.75, Orthogonal = +1.25",
+              "Marked meridian = +0.75, Orthogonal = −1.25",
+              "Marked meridian = +0.75, Orthogonal = +1.25",
+              "Marked meridian = −0.75, Orthogonal = −1.25"],
+    correct: 0,
+    explanation: "With motion neutralized with +0.75 → spectacle meridian = −0.75. Orthogonal was neutralized with −1.25 (against motion) → spectacle orthogonal meridian = +1.25. So those are the meridional powers."
+  },
+  { q: "18) While hand neutralizing you accidentally rotate the glasses after neutralizing the first meridian and before doing the second. What's the likely consequence?",
+    choices: ["No problem — both meridians are independent of orientation.",
+              "You may record the wrong axis for the second meridian leading to an incorrect Rx.",
+              "You will convert the Rx automatically to cylinder form.",
+              "The optical center will shift making both neutrals invalid."],
+    correct: 1,
+    explanation: "Rotating the glasses changes the meridian orientation relative to your prior mark; you risk attributing the wrong neutralization value to the wrong meridian, yielding an incorrect axis/Rx."
+  },
+  { q: "19) Which of the following is the correct step order when hand-neutralizing a spherocylindrical lens?",
+    choices: ["Mark one meridian → determine if lens spherical or spherocyl → neutralize both meridians → read protractor",
+              "Determine if lens is spherical or spherocyl → line up lens with principal meridians → mark one meridian → neutralize each meridian separately → determine axes with protractor",
+              "Neutralize with cylinders first → mark both meridians → read axis",
+              "Place lens in lensometer → then hand-neutralize"],
+    correct: 1,
+    explanation: "Correct sequence: determine if lens is spherical or spherocylindrical, line up with principal meridians, mark one meridian, neutralize each meridian separately (using perpendicular movements and spherical trial lenses), and use a protractor to read axes."
+  },
+  { q: "20) You hand-neutralized and obtained meridian powers +0.75 at 070° and +1.50 at 160°. Which of these Rx representations (minus-cylinder) is correct?",
+    choices: ["+0.75 -0.75 x 070", "+1.50 -0.75 x 160", "+1.50 -0.75 x 070", "+0.75 -0.75 x 160"],
+    correct: 1,
+    explanation: "More plus meridian is +1.50 (at 160°) → sphere = +1.50. Cylinder = other meridian − sphere = +0.75 − (+1.50) = −0.75, axis = meridian of sphere = 160°. So Rx = +1.50 −0.75 x 160."
+  }
+];
+
+/* ===========================
+   Question bank for Part 2 — Lensometry (20 MCQs)
+   Topics: eyepiece focus, calibration, single/triple lines, axis wheel, power drum, line-focus examples, BVP vs FVP, OC importance, reading numbers
+   =========================== */
+const part2 = [
+  { q: "1) What is the very first step you should perform on a manual lensometer before inserting a lens?",
+    choices: ["Set the power drum to zero", "Calibrate the axis wheel", "Focus the eyepiece (reticule) for your eye", "Turn the instrument on and wait 5 minutes"],
+    correct: 2,
+    explanation: "First focus the eyepiece so the reticule appears sharp for your eye. If the eyepiece is out of focus you will read incorrect powers. This is done before placing a lens on the stage."
+  },
+  { q: "2) When calibrating the lensometer target (without a lens), you see a reading of +0.25 on the power drum. What should you remember when reading an unknown lens after this?",
+    choices: ["You must add +0.25 to all readings", "You must subtract 0.25 from the reading to get the true power", "The instrument is broken and cannot be used", "Always rotate axis by 90° before reading powers"],
+    correct: 1,
+    explanation: "If the instrument calibration shows +0.25, the target is shifted by +0.25 — the actual lens powers will be 0.25 less than the drum reading, so subtract 0.25 from the drum reading to get the true power."
+  },
+  { q: "3) On a manual lensometer you place a lens and start with the power drum in the high plus (toward you). You turn the drum away from you until one set of lines focuses. If the single lines focus first, what does that tell you?",
+    choices: ["You have the correct axis and the single-line focus is the sphere power.", "Your axis is 90° off and you must rotate axis wheel by 90°.", "The lens is plano.", "You should remove the lens and flip it over."],
+    correct: 0,
+    explanation: "If the single lines focus first (at the more positive number), you are at the correct axis; that single-line focus corresponds to the sphere (in minus-cylinder notation you take that as the sphere)."
+  },
+  { q: "4) If, when turning toward minus, the triple lines come into focus before the single lines, what should you do?",
+    choices: ["Rotate the axis wheel 90° so the single lines become the first focus.", "Keep the axis as-is and record triple lines as sphere.", "Add plus lenses until single lines focus first.", "Flip the lens so temple faces you."],
+    correct: 0,
+    explanation: "If triple lines focus first, the axis is wrong by 90°. Rotating the axis wheel by 90° will switch which set focuses first, bringing the single lines into focus as the true sphere."
+  },
+  { q: "5) You focus single lines first and read +2.50 on the drum at axis 040; the triple lines then focus at +2.00. What is the Rx in minus-cylinder form?",
+    choices: ["+2.00 -0.50 x 040", "+2.50 -0.50 x 040", "+2.50 -2.00 x 040", "+2.00 -0.50 x 130"],
+    correct: 1,
+    explanation: "Single = sphere (+2.50) at axis 040. Cylinder = triple − single = +2.00 − (+2.50) = −0.50. So Rx = +2.50 −0.50 x 040."
+  },
+  { q: "6) You start at high plus; the triple lines focus first at +1.50 with axis wheel reading 085. What should you do next to get the correct Rx?",
+    choices: ["Leave axis at 085 and record triple as sphere.", "Rotate axis by 90° to 175 so the single lines become the sphere focus.", "Add plus until triple lines go away.", "Turn the lens around (flip) and repeat."],
+    correct: 1,
+    explanation: "When triple lines focus first, rotate axis wheel 90°; this makes the single lines become the first focus (sphere). Then proceed to find triple lines again to get cylinder difference."
+  },
+  { q: "7) On the power drum you read single lines first at -1.00 with axis 054; triple lines come into focus next at -2.25. What is the Rx?",
+    choices: ["-1.00 -1.25 x 054", "-2.25 -1.00 x 054", "-1.00 -0.25 x 054", "+1.00 -1.25 x 054"],
+    correct: 0,
+    explanation: "Sphere = single focus = -1.00. Cylinder = triple − single = (-2.25) − (-1.00) = -1.25. Axis is 054. So Rx = -1.00 -1.25 x 054."
+  },
+  { q: "8) Which set of statements is correct about black vs red markings when using a lensometer?",
+    choices: ["Black scale = minus, Red scale = plus", "Black scale = plus, Red scale = minus", "Both scales mean the same; color is decorative", "Black scale = axis, Red scale = power"],
+    correct: 1,
+    explanation: "The lensometer typically uses a black (positive) scale for plus readings and a red (negative) scale for minus readings; this helps read surface powers and identify sign quickly."
+  },
+  { q: "9) Why is it important to place the lens so the optical center (OC) is under the lensometer reticule?",
+    choices: ["Because the OC is where prism is maximal.", "Because the OC is where the prescribed vertex power is measured and there is no induced prism.", "So the frame won't fall off the stage.", "Because lensometers only read near the edge of lenses."],
+    correct: 1,
+    explanation: "The OC is the point where the prescribed power is located and where there is no induced prism; centering the target ensures accurate power measurement without unwanted prism effects."
+  },
+  { q: "10) You measure a lens on the lensometer and the single line focus is at +1.50 but the triple lines later focus at +0.50. What is the cylinder power and sign in minus-cylinder notation?",
+    choices: ["Cylinder = −1.00 D", "Cylinder = +1.00 D", "Cylinder = −2.00 D", "There is no cylinder; record as sphere only."],
+    correct: 0,
+    explanation: "Cylinder = (triple focus) − (single focus) = +0.50 − (+1.50) = −1.00 D when expressed in minus-cylinder form."
+  },
+  { q: "11) In the thinking example: if triple lines focused at +1.50 when axis wheel read 085, and single lines at +0.50, what mistake would produce an axis of 085 in your final Rx?",
+    choices: ["Not rotating axis by 90°, resulting in axis off by 90° in final Rx.", "Recording axis twice accidentally.", "Reading the red scale instead of black.", "Using plus cylinder instead of minus cylinder."],
+    correct: 0,
+    explanation: "If you don't rotate the axis by 90° when triple lines focus first, you'll get the correct powers but the axis will be off by 90°. Rotating by 90° fixes which set of lines represents sphere vs cylinder and gives correct axis."
+  },
+  { q: "12) You focus single lines at +2.75 with axis 167, and triple lines later at −0.25. What is the Rx?",
+    choices: ["+2.75 -3.00 x 167", "+2.75 -2.75 x 167", "+2.75 +3.00 x 167", "+2.75 -1.00 x 167"],
+    correct: 0,
+    explanation: "Cylinder = triple − single = (−0.25) − (+2.75) = −3.00 D. Sphere = +2.75, axis = 167. So Rx = +2.75 −3.00 x 167."
+  },
+  { q: "13) When refining the axis on a lensometer, paying attention to where single and triple lines connect helps because:",
+    choices: ["It makes the reticule prettier.", "A smeared/elongated image indicates you are not at the correct axis and that you need fine adjustments.", "It tells you the manufacturing date of the lens.", "It indicates whether the lens is plus or minus."],
+    correct: 1,
+    explanation: "Where single/triple lines join gives a visual cue for axis accuracy — a smeared or elongated target means the axis is off and needs refinement."
+  },
+  { q: "14) Back vertex power (BVP) is measured when the lens is placed on the lensometer with the temples facing away from you. What does BVP mean clinically?",
+    choices: ["The vergence of light exiting the back surface of the lens — what the lens presents to the eye in normal wear orientation.", "The total power of the front surface only.", "The same as surface curvature measured by a lens clock.", "It is only used for contact lenses."],
+    correct: 0,
+    explanation: "BVP refers to the vergence of light exiting the back of the lens (lens placed with temples away). This is the power that the eye 'sees' looking through the back surface and is what lensometers typically read."
+  },
+  { q: "15) If a lens is very thick (+5.00), why might back vertex power (BVP) differ from front vertex power (FVP)?",
+    choices: ["Thickness changes the vergence of light traveling through the lens, so front and back vertex powers can differ significantly for thick lenses.", "Because thick lenses are always mis-marked in the lab.", "Front and back vertex power are always identical regardless of thickness.", "Because thick lenses have more prism and no power."],
+    correct: 0,
+    explanation: "Lens thickness changes how light refracts inside the lens; for high powers or thick lenses, the front and back vertex powers can differ enough that FVP ≠ BVP."
+  },
+  { q: "16) Which of the following is a correct practical step when lines appear smeared/elongated on the lensometer target?",
+    choices: ["Assume lens is damaged and discard it.", "Refine axis until the connections between single/triple lines are sharp and round.", "Increase room lighting to maximum and re-measure.", "Always rotate lens 180° and measure again."],
+    correct: 1,
+    explanation: "Smeared/elongated images mean the axis is not correct — refine the axis wheel positioning until the single/triple line connections are sharp; this yields an accurate axis reading."
+  },
+  { q: "17) When reading a lens in minus-cylinder form, why must you not change the axis after you've set the sphere power?",
+    choices: ["Because changing the axis would require recalculation of the sphere/cylinder — the sphere is tied to the axis reading and should remain fixed.", "Axis changes are irrelevant after sphere is set.", "Because the axis is printed on the lens and cannot change.", "Because changing axis will damage the lensometer."],
+    correct: 0,
+    explanation: "Once sphere is read with the correct axis, changing the axis can swap which set of lines is single vs triple and will invalidate the sphere reading. So set sphere first then adjust cylinder without altering axis."
+  },
+  { q: "18) You notice when turning the axis wheel away from you you may accidentally go right through the single lines to the triple lines without noticing. What simple rule helps avoid this mistake?",
+    choices: ["Always add more plus power when going from single to triple.", "You always need to add more minus power to go from single to triple — if the triple appears at a more plus number, you're 90° off.", "Turn the axis wheel in reverse (toward you) only.", "Stop the instrument and restart it."],
+    correct: 1,
+    explanation: "To go from single to triple, you must always add more minus (turning the drum away). If triple lines focus at a more plus value (i.e., you added plus instead), that indicates you are 90° off with the axis."
+  },
+  { q: "19) Practical rule: which image should you focus first at the most (+) on a manual lensometer?",
+    choices: ["Always focus the triple lines first", "The single lines (they represent the sphere) should be focused first at the most positive number", "Either image — order does not matter", "Focus both images simultaneously and average the power"],
+    correct: 1,
+    explanation: "In minus-cylinder work, the single lines should be focused first at the most positive reading; that focus is taken as the sphere. Then continue toward minus until the triple lines focus, the difference giving the cylinder."
+  },
+  { q: "20) Last: you begin with the drum in the high plus and when single lines come into focus the reading is +1.50 at axis 175; later the triple lines focus at +0.50. What is the Rx?",
+    choices: ["+1.50 -1.00 x 175", "+0.50 -1.00 x 175", "+1.50 -0.50 x 175", "+1.50 -1.50 x 175"],
+    correct: 0,
+    explanation: "Sphere = single focus = +1.50. Cylinder = triple − single = +0.50 − (+1.50) = −1.00. Axis = 175. So Rx = +1.50 −1.00 x 175."
+  }
+];
+
+/* ===========================
+   Global state and UI functions
+   =========================== */
+let currentPart = 0; // 1 or 2
+let currentIndex = 0;
+let userAnswers = []; // for the active part (indices -> chosen idx or null)
+let answered = []; // whether checked
+let quizQuestions = []; // pointer to part1 or part2
+
+const quizArea = document.getElementById('quizArea');
+const prog = document.getElementById('prog');
+const navRow = document.getElementById('navRow');
+const summaryArea = document.getElementById('summaryArea');
+
+function showMenu(){
+  document.getElementById('menu').style.display = 'block';
+  quizArea.innerHTML = '';
+  navRow.style.display = 'none';
+  summaryArea.style.display = 'none';
+}
+
+function startPart(n){
+  currentPart = n;
+  currentIndex = 0;
+  summaryArea.style.display = 'none';
+  document.getElementById('menu').style.display = 'none';
+  navRow.style.display = 'block';
+  document.getElementById('prevBtn').disabled = true;
+  document.getElementById('checkBtn').disabled = false;
+  document.getElementById('nextBtn').disabled = false;
+  // choose questions
+  if(n === 1) {
+    quizQuestions = part1;
+  } else if(n === 2) {
+    quizQuestions = part2;
+  } else {
+    quizQuestions = [];
+  }
+  userAnswers = Array(quizQuestions.length).fill(null);
+  answered = Array(quizQuestions.length).fill(false);
+  renderQuestion(currentIndex);
+}
+
+function renderQuestion(i){
+  const obj = quizQuestions[i];
+  prog.textContent = `Part ${currentPart} — Question ${i+1} / ${quizQuestions.length}`;
+  // build html
+  let html = `<div class="card"><h3 style="margin:6px 0">${obj.q}</h3>`;
+  html += `<div class="small" style="margin-bottom:8px">Select one option then press <span class="kbd">Check answer</span>. Use <span class="kbd">Next</span> to move forward (answers saved).</div>`;
+  html += '<form id="qform">';
+  obj.choices.forEach((c, idx) => {
+    const checked = (userAnswers[i] === idx) ? 'checked' : '';
+    html += `<label class="option"><input type="radio" name="choice" value="${idx}" ${checked}> <strong>${String.fromCharCode(65+idx)}.</strong> ${c}</label>`;
+  });
+  html += '</form>';
+  html += `<div style="margin-top:8px"><button onclick="checkAnswer(event)">Check answer</button> <button class="secondary" onclick="showExplanation(event)" style="margin-left:8px">Show explanation</button></div>`;
+  html += `<div id="fb" style="display:none" class="feedback"></div>`;
+  html += `<div id="explain" class="explain" style="display:none"></div>`;
+  html += `</div>`;
+  quizArea.innerHTML = html;
+  // adjust prev/next
+  document.getElementById('prevBtn').disabled = (i === 0);
+  document.getElementById('nextBtn').textContent = (i === quizQuestions.length-1 ? 'Finish' : 'Next');
+}
+
+function captureSelection(){
+  const form = document.getElementById('qform');
+  if(!form) return null;
+  const sel = form.choice && form.choice.value;
+  if(sel === undefined) return null;
+  return (sel === '') ? null : parseInt(sel);
+}
+
+function checkAnswer(evt){
+  if(evt) evt.preventDefault();
+  const sel = captureSelection();
+  const fb = document.getElementById('fb');
+  const explain = document.getElementById('explain');
+  fb.style.display = 'block';
+  explain.style.display = 'block';
+  explain.innerHTML = `<strong>Explanation:</strong> ${quizQuestions[currentIndex].explanation}`;
+  if(sel === null){
+    fb.className = 'feedback bad';
+    fb.innerHTML = '<strong>No selection.</strong> Please select an option before checking.';
+    return;
+  }
+  // save answer
+  userAnswers[currentIndex] = sel;
+  answered[currentIndex] = true;
+  const correctIdx = quizQuestions[currentIndex].correct;
+  if(sel === correctIdx){
+    fb.className = 'feedback ok';
+    fb.innerHTML = `<strong>Correct.</strong> Option ${String.fromCharCode(65+correctIdx)} is correct.`;
+  } else {
+    fb.className = 'feedback bad';
+    fb.innerHTML = `<strong>Incorrect.</strong> Correct answer: <strong>${String.fromCharCode(65+correctIdx)}</strong>.`;
+  }
+}
+
+function showExplanation(evt){
+  if(evt) evt.preventDefault();
+  const explain = document.getElementById('explain');
+  if(!explain) return;
+  explain.style.display = 'block';
+  explain.innerHTML = `<strong>Explanation:</strong> ${quizQuestions[currentIndex].explanation}`;
+}
+
+function nextQ(){
+  // capture selection (don’t require check to move on)
+  const sel = captureSelection();
+  if(sel !== null) { userAnswers[currentIndex] = sel; answered[currentIndex] = true; }
+  if(currentIndex < quizQuestions.length -1){
+    currentIndex++;
+    renderQuestion(currentIndex);
+    window.scrollTo(0,0);
+  } else {
+    // finish -> show summary
+    showSummary();
+  }
+}
+
+function prevQ(){
+  // capture current selection
+  const sel = captureSelection();
+  if(sel !== null) { userAnswers[currentIndex] = sel; answered[currentIndex] = true; }
+  if(currentIndex > 0){
+    currentIndex--;
+    renderQuestion(currentIndex);
+    window.scrollTo(0,0);
+  }
+}
+
+/* Summary generation */
+function showSummary(){
+  // compute score
+  let correct = 0;
+  let total = quizQuestions.length;
+  let missed = [];
+  for(let i=0;i<total;i++){
+    const ans = userAnswers[i];
+    const corr = quizQuestions[i].correct;
+    if(ans === corr) correct++;
+    else missed.push({index:i, your: ans, correct: corr, q: quizQuestions[i]});
+  }
+  // render summary
+  navRow.style.display = 'none';
+  quizArea.innerHTML = '';
+  summaryArea.style.display = 'block';
+  let html = `<h2>Part ${currentPart} — Summary</h2>`;
+  html += `<div class="small">Score: <strong>${correct} / ${total}</strong> (${Math.round(100*correct/total)}%)</div>`;
+  html += `<div style="margin-top:10px"><button onclick="reviewMissed()">Review missed questions</button> <button onclick="restartPart()">Restart part</button> <button class="secondary" onclick="showMenu()">Back to menu</button></div>`;
+  // list missed brief
+  if(missed.length===0){
+    html += `<div style="margin-top:12px" class="card"><strong>Perfect!</strong> You answered all questions correctly for this part.</div>`;
+  } else {
+    html += `<div style="margin-top:12px"><h3>Missed questions (${missed.length})</h3><div class="summary-list">`;
+    missed.forEach(m=>{
+      const yourStr = (m.your === null) ? 'No answer' : String.fromCharCode(65 + m.your);
+      const corrStr = String.fromCharCode(65 + m.correct);
+      html += `<div style="margin-bottom:8px"><strong>Q${m.index+1}:</strong> Your: <strong>${yourStr}</strong> — Correct: <strong>${corrStr}</strong></div>`;
+    });
+    html += `</div></div>`;
+  }
+  // expanded: full answer key
+  html += `<div style="margin-top:14px"><h3>Answer key & explanations</h3>`;
+  quizQuestions.forEach((qq, idx)=>{
+    const corr = qq.correct;
+    html += `<div style="margin-top:8px" class="card"><strong>Q${idx+1}.</strong> ${qq.q}<br><em>Correct:</em> <strong>${String.fromCharCode(65+corr)}.</strong> ${qq.choices[corr]}<div class="explain" style="margin-top:8px"><strong>Why:</strong> ${qq.explanation}</div></div>`;
+  });
+  html += `</div>`;
+  summaryArea.innerHTML = html;
+  window.scrollTo(0,0);
+}
+
+function reviewMissed(){
+  // iterate to first missed question and render; show nav
+  const firstMiss = userAnswers.findIndex((a,i)=> a !== quizQuestions[i].correct);
+  if(firstMiss === -1){
+    alert('No missed questions — well done!');
+    return;
+  }
+  currentIndex = firstMiss;
+  summaryArea.style.display = 'none';
+  navRow.style.display = 'block';
+  renderQuestion(currentIndex);
+}
+
+function restartPart(){
+  userAnswers = Array(quizQuestions.length).fill(null);
+  answered = Array(quizQuestions.length).fill(false);
+  currentIndex = 0;
+  summaryArea.style.display = 'none';
+  navRow.style.display = 'block';
+  renderQuestion(0);
+}
+
+function showHelp(){
+  document.getElementById('menu').style.display = 'none';
+  summaryArea.style.display = 'block';
+  navRow.style.display = 'none';
+  summaryArea.innerHTML = `<h2>How to use this quiz</h2>
+  <div class="small">Choose a Part from the menu. Each Part has 20 multiple-choice questions in fixed order. For each question:
+  <ul>
+    <li>Select an option and press <strong>Check answer</strong> to see immediate feedback and an explanation.</li>
+    <li>You can use <strong>Next</strong> to move to the next question — answers are saved when selected.</li>
+    <li>At the end of the Part you will get a summary with score, missed questions, and full answer key with explanations.</li>
+  </ul>
+  </div>
+  <div style="margin-top:10px"><button onclick="showMenu()">Back to menu</button></div>`;
+}
+
+/* initialize: show menu */
+showMenu();
+
+</script>
+</body>
+</html>
+

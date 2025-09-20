@@ -1,7 +1,8 @@
 /head-neck/
   └── exam1/
-        ├── lecture1.html
-        ├── lecture2.html
+        ├── lecture3.html
+        ├── lecture4.html
+        ├── lecture5.html
         └── resources.html
   └── exam2/
         ├── lecture1.html
@@ -9,4 +10,5 @@
 /ocular/
   └── exam1/
         ├── lecture1.html
+        ├── lecture2.html
         └── resources.html

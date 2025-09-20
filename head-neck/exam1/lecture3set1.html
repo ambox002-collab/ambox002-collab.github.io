@@ -2,29 +2,133 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Lecture 3</title>
+  <title>Division of the Nervous System – Practice Quiz</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background-color: #f4f7fa;
       padding: 40px;
       color: #333;
-      text-align: center;
     }
-    .message {
-      border: 2px dashed #aaa;
-      background-color: #fff;
-      padding: 30px;
-      margin-top: 60px;
-      font-size: 1.2em;
+    .question {
+      margin-bottom: 30px;
+    }
+    .choices button {
+      display: block;
+      margin: 8px 0;
+      padding: 10px;
+      width: 100%;
+      background-color: #e0e0e0;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+    }
+    .choices button.correct {
+      background-color: #a5d6a7;
+    }
+    .choices button.incorrect {
+      background-color: #ef9a9a;
+    }
+    .feedback {
+      margin-top: 10px;
+      font-style: italic;
+    }
+    #score {
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    #review {
+      display: none;
+      margin-top: 40px;
     }
   </style>
 </head>
 <body>
-  <h1>📘 Lecture 3</h1>
-  <div class="message">
-    <p>This page is under construction.</p>
-    <p>Practice quizzes and resources will be added soon!</p>
-  </div>
+  <h1>🧠 Division of the Nervous System – Practice Quiz</h1>
+  <div id="quiz"></div>
+  <div id="score"></div>
+  <div id="review"></div>
+
+  <script>
+    const questions = [
+      {
+        question: "Which part of the nervous system includes the brain and spinal cord?",
+        choices: ["Peripheral Nervous System", "Autonomic Nervous System", "Central Nervous System", "Somatic Nervous System"],
+        correct: 2,
+        explanation: "The CNS includes the brain and spinal cord, responsible for processing and integrating information."
+      },
+      {
+        question: "Afferent neurons carry signals:",
+        choices: ["From the CNS to muscles", "From muscles to the CNS", "Between interneurons", "From the brain to the spinal cord"],
+        correct: 1,
+        explanation: "Afferent neurons carry sensory signals from the body to the CNS."
+      },
+      // Add 8 more questions here...
+    ];
+
+    let current = 0;
+    let score = 0;
+    const userAnswers = [];
+
+    function loadQuestion() {
+      const q = questions[current];
+      const quizDiv = document.getElementById("quiz");
+      quizDiv.innerHTML = `
+        <div class="question">
+          <h3>Q${current + 1}: ${q.question}</h3>
+          <div class="choices">
+            ${q.choices.map((choice, i) => `<button onclick="checkAnswer(${i})">${choice}</button>`).join("")}
+          </div>
+          <div class="feedback" id="feedback"></div>
+        </div>
+      `;
+    }
+
+    function checkAnswer(selected) {
+      const q = questions[current];
+      const buttons = document.querySelectorAll(".choices button");
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === q.correct) btn.classList.add("correct");
+        if (i === selected && i !== q.correct) btn.classList.add("incorrect");
+      });
+
+      const feedback = document.getElementById("feedback");
+      if (selected === q.correct) {
+        score++;
+        feedback.innerHTML = "✅ Correct!";
+      } else {
+        feedback.innerHTML = `❌ Incorrect. ${q.explanation}`;
+      }
+
+      userAnswers.push({ question: q.question, selected, correct: q.correct, explanation: q.explanation });
+      setTimeout(() => {
+        current++;
+        if (current < questions.length) {
+          loadQuestion();
+        } else {
+          showReview();
+        }
+      }, 1500);
+    }
+
+    function showReview() {
+      document.getElementById("quiz").style.display = "none";
+      document.getElementById("score").innerHTML = `Your score: ${score} / ${questions.length}`;
+      const reviewDiv = document.getElementById("review");
+      reviewDiv.style.display = "block";
+      reviewDiv.innerHTML = "<h2>Review</h2>" + userAnswers.map((ans, i) => `
+        <div>
+          <strong>Q${i + 1}: ${ans.question}</strong><br>
+          Your answer: ${questions[i].choices[ans.selected]}<br>
+          Correct answer: ${questions[i].choices[ans.correct]}<br>
+          ${ans.selected === ans.correct ? "✅ Correct" : "❌ Incorrect"}<br>
+          Explanation: ${ans.explanation}
+        </div><hr>
+      `).join("");
+    }
+
+    loadQuestion();
+  </script>
 </body>
 </html>

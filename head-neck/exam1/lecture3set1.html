@@ -81,4 +81,95 @@
         question: "Which part of the nervous system includes the brain and spinal cord?",
         choices: ["Peripheral Nervous System", "Autonomic Nervous System", "Central Nervous System", "Somatic Nervous System"],
         correct: 2,
-        explanation: "The CNS includes
+        explanation: "The CNS includes the brain and spinal cord, responsible for processing and integrating information."
+      },
+      {
+        question: "Afferent neurons carry signals:",
+        choices: ["From the CNS to muscles", "From muscles to the CNS", "Between interneurons", "From the brain to the spinal cord"],
+        correct: 1,
+        explanation: "Afferent neurons carry sensory signals from the body to the CNS."
+      }
+      // Add more questions here...
+    ];
+
+    let current = 0;
+    let score = 0;
+    const userAnswers = Array(questions.length).fill(null);
+
+    function startQuiz() {
+      document.getElementById("start").style.display = "none";
+      document.getElementById("quiz").style.display = "block";
+      document.getElementById("navigation").style.display = "block";
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const q = questions[current];
+      const quizDiv = document.getElementById("quiz");
+      quizDiv.innerHTML = `
+        <div class="question">
+          <h3>Q${current + 1}: ${q.question}</h3>
+          <div class="choices">
+            ${q.choices.map((choice, i) => {
+              const selected = userAnswers[current] === i;
+              const correct = i === q.correct;
+              const className = selected ? (correct ? "correct" : "incorrect") : "";
+              return `<button class="${className}" onclick="checkAnswer(${i})">${choice}</button>`;
+            }).join("")}
+          </div>
+          <div class="feedback" id="feedback">${userAnswers[current] !== null ? getFeedback(current) : ""}</div>
+        </div>
+      `;
+    }
+
+    function checkAnswer(selected) {
+      if (userAnswers[current] === null) {
+        userAnswers[current] = selected;
+        if (selected === questions[current].correct) score++;
+      }
+      loadQuestion();
+    }
+
+    function getFeedback(index) {
+      const selected = userAnswers[index];
+      const correct = questions[index].correct;
+      return selected === correct
+        ? "✅ Correct!"
+        : `❌ Incorrect. ${questions[index].explanation}`;
+    }
+
+    function nextQuestion() {
+      if (current < questions.length - 1) {
+        current++;
+        loadQuestion();
+      } else {
+        showReview();
+      }
+    }
+
+    function prevQuestion() {
+      if (current > 0) {
+        current--;
+        loadQuestion();
+      }
+    }
+
+    function showReview() {
+      document.getElementById("quiz").style.display = "none";
+      document.getElementById("navigation").style.display = "none";
+      document.getElementById("score").innerHTML = `Your score: ${score} / ${questions.length}`;
+      const reviewDiv = document.getElementById("review");
+      reviewDiv.style.display = "block";
+      reviewDiv.innerHTML = "<h2>Review</h2>" + questions.map((q, i) => `
+        <div>
+          <strong>Q${i + 1}: ${q.question}</strong><br>
+          Your answer: ${q.choices[userAnswers[i] ?? "No answer"]}<br>
+          Correct answer: ${q.choices[q.correct]}<br>
+          ${userAnswers[i] === q.correct ? "✅ Correct" : "❌ Incorrect"}<br>
+          Explanation: ${q.explanation}
+        </div><hr>
+      `).join("");
+    }
+  </script>
+</body>
+</html>

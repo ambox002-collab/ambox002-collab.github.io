@@ -1,341 +1,85 @@
-
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>Optometry — Head & Neck Practice Quiz (Lecture 3)</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;padding:18px;line-height:1.45;color:#111}
-    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    h1{margin:0;font-size:1.5rem}
-    .container{max-width:900px;margin:18px auto}
-    .card{background:#fff;border:1px solid #e3e3e3;border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,0.04)}
-    .question{font-weight:600}
-    .choices{margin-top:8px}
-    label{display:block;padding:8px;border-radius:8px;border:1px solid transparent}
-    input[type="radio"]{margin-right:8px}
-    .explanation{margin-top:10px;padding:10px;border-radius:8px;background:#f6f6ff;display:none}
-    .correct{background:#e6ffef;border-color:#b6f2c9}
-    .incorrect{background:#ffebeb;border-color:#f2b6b6}
-    .controls{display:flex;gap:10px;align-items:center;margin-top:8px}
-    .btn{padding:8px 12px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer}
-    .btn-primary{background:#2563eb;color:#fff;border-color:#1e40af}
-    .small{font-size:0.9rem;color:#555}
-    nav{display:flex;gap:8px;margin-bottom:12px}
-    .score{font-weight:700}
-    .review-list{margin-top:8px}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:8px;border:1px solid #eee;text-align:left}
-    footer{margin-top:18px;font-size:0.9rem;color:#666}
-    .hidden{display:none}
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <h1>Optometry — Head & Neck Practice Quiz (Lecture 3)</h1>
-      <div>
-        <div class="small">Score: <span id="scoreDisplay">0</span> / <span id="totalDisplay">0</span></div>
-        <div class="small">Saved best: <span id="bestDisplay">0</span></div>
-      </div>
-    </header>
-
-    <nav>
-      <button class="btn btn-primary" id="startBtn">Start / Reset Quiz</button>
-      <button class="btn" id="reviewBtn">Review All Qs & Answers</button>
-      <button class="btn" id="showProgressBtn">Show Progress</button>
-    </nav>
-
-    <div id="quizArea"></div>
-
-    <div id="reviewArea" class="card hidden">
-      <h3>Review — All Questions & Answers</h3>
-      <div id="reviewList" class="review-list"></div>
-    </div>
-
-    <div id="progressArea" class="card hidden">
-      <h3>Progress / Attempts</h3>
-      <div id="progressInfo"></div>
-    </div>
-
-    <footer class="small">
-      This quiz is generated from the lecture file "HN Lecture 3" (Head & Neck). Created to test concept understanding and application for optometry students. Explanations appear immediately after answering each question. Score is tracked locally in your browser.
-    </footer>
-  </div>
-
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><title>Optometry Quiz — 80 Qs with PDF Images</title><meta name="viewport" content="width=device-width,initial-scale=1"><style>
+body{font-family:system-ui,Segoe UI,Roboto,Arial;padding:18px;color:#111}
+.container{max-width:980px;margin:0 auto}
+header{display:flex;justify-content:space-between;align-items:center}
+button{padding:8px 10px;border-radius:8px;border:1px solid #ccc;background:#fff;cursor:pointer}
+.card{border:1px solid #eee;padding:12px;border-radius:10px;margin:10px 0}
+label{display:block;padding:6px;border-radius:8px}
+.explanation{background:#f6f6ff;padding:8px;margin-top:8px;border-radius:8px;display:none}
+.correct{background:#e6ffef}
+.incorrect{background:#ffebeb}
+img{max-width:100%;height:auto}
+.topnav{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+</style></head><body><div class="container"><header><h1>Optometry — Head & Neck (Lecture 3) — 80 Qs</h1><div>Created from your PDF. Images embedded from the lecture.</div></header>
+<div class="topnav">
+<button onclick="loadTopic('division')">Division of Nervous System</button>
+<button onclick="loadTopic('autonomic')">Autonomic Nervous System</button>
+<button onclick="loadTopic('brain')">Parts of the Brain</button>
+<button onclick="loadTopic('arterial')">Arterial Supply to Brain & Face</button>
+<button onclick="showReview()">Review All</button>
+</div>
+<div id="quizArea"></div>
+<div id="reviewArea" style="display:none"></div>
+</div>
 <script>
-/* Quiz data - questions + choices + correct index + explanation */
-const quizData = [
-  {
-    q: "Which cranial nerves are considered part of the central nervous system rather than the peripheral nervous system?",
-    choices: ["I (Olfactory) and II (Optic)", "III (Oculomotor) and IV (Trochlear)", "V (Trigeminal) and VII (Facial)", "All cranial nerves are PNS"],
-    correct: 0,
-    explanation: "Cranial nerves I (olfactory) and II (optic) are embryologically and structurally extensions of the brain and are therefore considered part of the CNS."
-  },
-  {
-    q: "Which artery supplies the lateral aspect of the cerebral hemisphere (areas like primary motor and sensory cortex for the face and hand)?",
-    choices: ["Anterior cerebral artery (ACA)", "Middle cerebral artery (MCA)", "Posterior cerebral artery (PCA)", "External carotid artery"],
-    correct: 1,
-    explanation: "The MCA supplies the lateral convexity of the cerebral hemisphere, including primary motor and sensory areas for the face and upper limb."
-  },
-  {
-    q: "Preganglionic parasympathetic fibers that constrict the pupil originate from which nucleus?",
-    choices: ["Superior salivatory nucleus", "Edinger–Westphal nucleus", "Lateral horn (T1–T2)", "Dorsal motor nucleus of vagus"],
-    correct: 1,
-    explanation: "The Edinger–Westphal nucleus (in the midbrain) contains the preganglionic parasympathetic neurons whose fibers travel with CN III to the ciliary ganglion and then to the iris sphincter."
-  },
-  {
-    q: "Which autonomic division primarily uses norepinephrine (NE) as a postganglionic neurotransmitter?",
-    choices: ["Somatic motor system", "Parasympathetic nervous system", "Sympathetic nervous system", "Enteric nervous system"],
-    correct: 2,
-    explanation: "Sympathetic postganglionic fibers typically release norepinephrine; parasympathetic postganglionic fibers release acetylcholine."
-  },
-  {
-    q: "The superior cervical ganglion mainly contributes postganglionic sympathetic fibers to which orbital/pupil-related path?",
-    choices: ["They synapse in the ciliary ganglion and cause constriction", "They wrap around the internal carotid and travel to the orbit to dilate the pupil", "They join CN VII to innervate lacrimation", "They travel with the trigeminal nerve to supply cornea sensation"],
-    correct: 1,
-    explanation: "Postganglionic sympathetic fibers from the superior cervical ganglion join periarterial plexuses around the internal carotid and reach the eye to innervate the dilator pupillae and Müller muscle (eyelid elevation)."
-  },
-  {
-    q: "Which vessel is NOT a branch of the internal carotid artery after it exits the cavernous sinus?",
-    choices: ["Ophthalmic artery", "Anterior cerebral artery (ACA)", "Middle cerebral artery (MCA)", "External carotid artery"],
-    correct: 3,
-    explanation: "The external carotid branches supply the face and neck and do not arise from the intracranial internal carotid. ICA gives off the ophthalmic, ACA, and MCA intracranially."
-  },
-  {
-    q: "Which statement best describes the Circle of Willis?",
-    choices: ["A venous sinus around the pituitary", "A ring of arteries that provides collateral circulation at the base of the brain", "The arterial supply exclusively to the cerebellum", "A set of capillaries forming the blood–brain barrier"],
-    correct: 1,
-    explanation: "The Circle of Willis is an arterial polygon at the base of the brain providing potential collateral flow between anterior and posterior circulations."
-  },
-  {
-    q: "The parasympathetic preganglionic fibers that constrict the pupil travel within which cranial nerve?",
-    choices: ["CN II (Optic)", "CN III (Oculomotor)", "CN V (Trigeminal)", "CN VII (Facial)"],
-    correct: 1,
-    explanation: "The parasympathetic preganglionic fibers originate in the Edinger–Westphal nucleus and travel in CN III to the ciliary ganglion."
-  },
-  {
-    q: "Which of these is a typical effect of parasympathetic activation?",
-    choices: ["Pupil dilation", "Increased heart rate", "Stimulated digestion and gland secretion", "Vasoconstriction of skin vessels"],
-    correct: 2,
-    explanation: "Parasympathetic activation is 'rest and digest' — it promotes digestion and gland secretion, constricts pupils, and generally decreases heart rate."
-  },
-  {
-    q: "Damage to the sympathetic pathway to the eye (e.g., from a neck lesion) can produce which clinical triad?",
-    choices: ["Miosis, ptosis, anhidrosis (Horner syndrome)", "Mydriasis, lid retraction, hyperhidrosis", "Nystagmus, diplopia, loss of accommodation", "Proptosis, conjunctival chemosis, epiphora"],
-    correct: 0,
-    explanation: "Damage to sympathetic innervation causes Horner syndrome: miosis (constricted pupil), ptosis (drooping upper eyelid), and anhidrosis (loss of facial sweating) on the affected side."
-  },
-  {
-    q: "Where do the vertebral arteries enter the cranial cavity?",
-    choices: ["Carotid foramen", "Foramen magnum", "Jugular foramen", "Foramen ovale"],
-    correct: 1,
-    explanation: "The vertebral arteries ascend through the foramen transversarium of cervical vertebrae and enter the skull through the foramen magnum, then join to form the basilar artery."
-  },
-  {
-    q: "Which artery typically supplies the medial surface of the cerebral hemispheres (including areas controlling the lower limb)?",
-    choices: ["Middle cerebral artery (MCA)", "Anterior cerebral artery (ACA)", "Posterior cerebral artery (PCA)", "Basilar artery"],
-    correct: 1,
-    explanation: "The ACA supplies the medial surface of the cerebral hemisphere including regions of motor and sensory cortex for the lower limb and pelvic area."
-  }
-];
-
-/* Setup */
-const total = quizData.length;
-document.getElementById('totalDisplay').textContent = total;
-let state = {
-  answers: Array(total).fill(null),
-  scored: false
-};
-
-function renderQuestion(i){
-  const item = quizData[i];
-  const container = document.createElement('div');
-  container.className = 'card';
-  container.id = 'q'+i;
-  container.innerHTML = `
-    <div class="question">Q${i+1}. ${item.q}</div>
-    <div class="choices">
-      ${item.choices.map((c,idx)=>`<label id="label-${i}-${idx}"><input type="radio" name="q${i}" value="${idx}"> ${c}</label>`).join('')}
-    </div>
-    <div class="controls">
-      <button class="btn" data-action="check" data-i="${i}">Check Answer</button>
-      <div class="small">Your answer: <span id="your-${i}">—</span></div>
-    </div>
-    <div class="explanation" id="exp-${i}"><strong>Explanation:</strong><div id="exp-text-${i}"></div></div>
-  `;
-  return container;
+const topicData = {"division": [{"q": "Which cranial nerve(s) are considered central nervous system?", "choices": ["I and II", "III and IV", "V and VI", "All are PNS"], "correct": 0, "explanation": "Explanation: Correct: I and II. Review concept in lecture.", "img": "page100_img1.png"}, {"q": "Which structure contains the cell bodies of sensory neurons that bring information to the CNS?", "choices": ["Dorsal root ganglion", "Ventral horn", "Gray commissure", "Lateral horn"], "correct": 0, "explanation": "Explanation: Correct: Dorsal root ganglion. Review concept in lecture.", "img": "page100_img2.png"}, {"q": "The somatic nervous system primarily controls which type of muscles?", "choices": ["Smooth muscle", "Skeletal muscle", "Cardiac muscle", "Glandular muscle"], "correct": 1, "explanation": "Explanation: Correct: Skeletal muscle. Review concept in lecture.", "img": "page101_img1.png"}, {"q": "Which tract primarily carries proprioceptive information to the cerebellum?", "choices": ["Spinothalamic", "Dorsal columns (posterior)", "Corticospinal", "Spinocerebellar"], "correct": 3, "explanation": "Explanation: Correct: Spinocerebellar. Review concept in lecture.", "img": "page101_img2.png"}, {"q": "Which cells form myelin in the CNS?", "choices": ["Schwann cells", "Oligodendrocytes", "Satellite cells", "Microglia"], "correct": 1, "explanation": "Explanation: Correct: Oligodendrocytes. Review concept in lecture.", "img": "page101_img3.png"}, {"q": "Which cells form myelin in the CNS? (clinical scenario)", "choices": ["Schwann cells", "Oligodendrocytes", "Satellite cells", "Microglia"], "correct": 1, "explanation": "Explanation: Correct: Oligodendrocytes. Review concept in lecture.", "img": "page102_img1.png"}, {"q": "Which cranial nerve(s) are considered central nervous system?", "choices": ["I and II", "III and IV", "V and VI", "All are PNS"], "correct": 0, "explanation": "Explanation: Correct: I and II. Review concept in lecture.", "img": "page102_img2.png"}, {"q": "The somatic nervous system primarily controls which type of muscles? (clinical scenario)", "choices": ["Smooth muscle", "Skeletal muscle", "Cardiac muscle", "Glandular muscle"], "correct": 1, "explanation": "Explanation: Correct: Skeletal muscle. Review concept in lecture.", "img": "page102_img3.png"}, {"q": "Which cranial nerve(s) are considered central nervous system?", "choices": ["I and II", "III and IV", "V and VI", "All are PNS"], "correct": 0, "explanation": "Explanation: Correct: I and II. Review concept in lecture.", "img": "page103_img1.png"}, {"q": "Which structure contains the cell bodies of sensory neurons that bring information to the CNS? (clinical scenario)", "choices": ["Dorsal root ganglion", "Ventral horn", "Gray commissure", "Lateral horn"], "correct": 0, "explanation": "Explanation: Correct: Dorsal root ganglion. Review concept in lecture.", "img": "page103_img2.png"}, {"q": "Which tract primarily carries proprioceptive information to the cerebellum?", "choices": ["Spinothalamic", "Dorsal columns (posterior)", "Corticospinal", "Spinocerebellar"], "correct": 3, "explanation": "Explanation: Correct: Spinocerebellar. Review concept in lecture.", "img": "page103_img3.png"}, {"q": "The somatic nervous system primarily controls which type of muscles? (clinical scenario)", "choices": ["Smooth muscle", "Skeletal muscle", "Cardiac muscle", "Glandular muscle"], "correct": 1, "explanation": "Explanation: Correct: Skeletal muscle. Review concept in lecture.", "img": "page104_img1.png"}, {"q": "The somatic nervous system primarily controls which type of muscles?", "choices": ["Smooth muscle", "Skeletal muscle", "Cardiac muscle", "Glandular muscle"], "correct": 1, "explanation": "Explanation: Correct: Skeletal muscle. Review concept in lecture.", "img": "page104_img2.png"}, {"q": "Which cranial nerve(s) are considered central nervous system? (clinical scenario)", "choices": ["I and II", "III and IV", "V and VI", "All are PNS"], "correct": 0, "explanation": "Explanation: Correct: I and II. Review concept in lecture.", "img": "page105_img1.png"}, {"q": "Which tract primarily carries proprioceptive information to the cerebellum?", "choices": ["Spinothalamic", "Dorsal columns (posterior)", "Corticospinal", "Spinocerebellar"], "correct": 3, "explanation": "Explanation: Correct: Spinocerebellar. Review concept in lecture.", "img": "page105_img2.png"}, {"q": "Which tract primarily carries proprioceptive information to the cerebellum? (clinical scenario)", "choices": ["Spinothalamic", "Dorsal columns (posterior)", "Corticospinal", "Spinocerebellar"], "correct": 3, "explanation": "Explanation: Correct: Spinocerebellar. Review concept in lecture.", "img": "page106_img1.png"}, {"q": "Which structure contains the cell bodies of sensory neurons that bring information to the CNS?", "choices": ["Dorsal root ganglion", "Ventral horn", "Gray commissure", "Lateral horn"], "correct": 0, "explanation": "Explanation: Correct: Dorsal root ganglion. Review concept in lecture.", "img": "page107_img1.png"}, {"q": "Which structure contains the cell bodies of sensory neurons that bring information to the CNS? (clinical scenario)", "choices": ["Dorsal root ganglion", "Ventral horn", "Gray commissure", "Lateral horn"], "correct": 0, "explanation": "Explanation: Correct: Dorsal root ganglion. Review concept in lecture.", "img": "page107_img2.png"}, {"q": "The somatic nervous system primarily controls which type of muscles?", "choices": ["Smooth muscle", "Skeletal muscle", "Cardiac muscle", "Glandular muscle"], "correct": 1, "explanation": "Explanation: Correct: Skeletal muscle. Review concept in lecture.", "img": "page107_img3.png"}, {"q": "The somatic nervous system primarily controls which type of muscles? (clinical scenario)", "choices": ["Smooth muscle", "Skeletal muscle", "Cardiac muscle", "Glandular muscle"], "correct": 1, "explanation": "Explanation: Correct: Skeletal muscle. Review concept in lecture.", "img": "page108_img1.png"}], "autonomic": [{"q": "Preganglionic parasympathetic fibers that constrict the pupil originate from which nucleus?", "choices": ["Superior salivatory", "Edinger\u2013Westphal", "Lateral horn T1-T2", "Dorsal motor nucleus of vagus"], "correct": 1, "explanation": "Explanation: Correct: Edinger\u2013Westphal. Review concept in lecture.", "img": "page108_img2.png"}, {"q": "Which autonomic division predominantly uses norepinephrine postganglionically?", "choices": ["Parasympathetic", "Sympathetic", "Somatic", "Enteric"], "correct": 1, "explanation": "Explanation: Correct: Sympathetic. Review concept in lecture.", "img": "page108_img3.png"}, {"q": "Postganglionic sympathetic fibers to the eye arise from which ganglion?", "choices": ["Ciliary ganglion", "Pterygopalatine ganglion", "Superior cervical ganglion", "Submandibular ganglion"], "correct": 2, "explanation": "Explanation: Correct: Superior cervical ganglion. Review concept in lecture.", "img": "page109_img1.png"}, {"q": "The main parasympathetic supply to lacrimation travels with which nerve?", "choices": ["CN V1", "CN VII (via greater petrosal)", "CN IX", "CN X"], "correct": 1, "explanation": "Explanation: Correct: CN VII (via greater petrosal). Review concept in lecture.", "img": "page109_img10.png"}, {"q": "Horner syndrome includes which triad?", "choices": ["Mydriasis, ptosis, hyperhidrosis", "Miosis, ptosis, anhidrosis", "Miosis, lid retraction, hyperhidrosis", "Mydriasis, ptosis, anhidrosis"], "correct": 1, "explanation": "Explanation: Correct: Miosis, ptosis, anhidrosis. Review concept in lecture.", "img": "page109_img11.png"}, {"q": "Which autonomic division predominantly uses norepinephrine postganglionically? (clinical scenario)", "choices": ["Parasympathetic", "Sympathetic", "Somatic", "Enteric"], "correct": 1, "explanation": "Explanation: Correct: Sympathetic. Review concept in lecture.", "img": "page109_img12.png"}, {"q": "Which autonomic division predominantly uses norepinephrine postganglionically?", "choices": ["Parasympathetic", "Sympathetic", "Somatic", "Enteric"], "correct": 1, "explanation": "Explanation: Correct: Sympathetic. Review concept in lecture.", "img": "page109_img2.png"}, {"q": "Preganglionic parasympathetic fibers that constrict the pupil originate from which nucleus? (clinical scenario)", "choices": ["Superior salivatory", "Edinger\u2013Westphal", "Lateral horn T1-T2", "Dorsal motor nucleus of vagus"], "correct": 1, "explanation": "Explanation: Correct: Edinger\u2013Westphal. Review concept in lecture.", "img": "page109_img3.png"}, {"q": "Horner syndrome includes which triad?", "choices": ["Mydriasis, ptosis, hyperhidrosis", "Miosis, ptosis, anhidrosis", "Miosis, lid retraction, hyperhidrosis", "Mydriasis, ptosis, anhidrosis"], "correct": 1, "explanation": "Explanation: Correct: Miosis, ptosis, anhidrosis. Review concept in lecture.", "img": "page109_img4.png"}, {"q": "The main parasympathetic supply to lacrimation travels with which nerve? (clinical scenario)", "choices": ["CN V1", "CN VII (via greater petrosal)", "CN IX", "CN X"], "correct": 1, "explanation": "Explanation: Correct: CN VII (via greater petrosal). Review concept in lecture.", "img": "page109_img5.png"}, {"q": "Horner syndrome includes which triad?", "choices": ["Mydriasis, ptosis, hyperhidrosis", "Miosis, ptosis, anhidrosis", "Miosis, lid retraction, hyperhidrosis", "Mydriasis, ptosis, anhidrosis"], "correct": 1, "explanation": "Explanation: Correct: Miosis, ptosis, anhidrosis. Review concept in lecture.", "img": "page109_img6.png"}, {"q": "Postganglionic sympathetic fibers to the eye arise from which ganglion? (clinical scenario)", "choices": ["Ciliary ganglion", "Pterygopalatine ganglion", "Superior cervical ganglion", "Submandibular ganglion"], "correct": 2, "explanation": "Explanation: Correct: Superior cervical ganglion. Review concept in lecture.", "img": "page109_img7.png"}, {"q": "Preganglionic parasympathetic fibers that constrict the pupil originate from which nucleus?", "choices": ["Superior salivatory", "Edinger\u2013Westphal", "Lateral horn T1-T2", "Dorsal motor nucleus of vagus"], "correct": 1, "explanation": "Explanation: Correct: Edinger\u2013Westphal. Review concept in lecture.", "img": "page109_img8.png"}, {"q": "Preganglionic parasympathetic fibers that constrict the pupil originate from which nucleus? (clinical scenario)", "choices": ["Superior salivatory", "Edinger\u2013Westphal", "Lateral horn T1-T2", "Dorsal motor nucleus of vagus"], "correct": 1, "explanation": "Explanation: Correct: Edinger\u2013Westphal. Review concept in lecture.", "img": "page109_img9.png"}, {"q": "Postganglionic sympathetic fibers to the eye arise from which ganglion?", "choices": ["Ciliary ganglion", "Pterygopalatine ganglion", "Superior cervical ganglion", "Submandibular ganglion"], "correct": 2, "explanation": "Explanation: Correct: Superior cervical ganglion. Review concept in lecture.", "img": "page10_img1.png"}, {"q": "Preganglionic parasympathetic fibers that constrict the pupil originate from which nucleus? (clinical scenario)", "choices": ["Superior salivatory", "Edinger\u2013Westphal", "Lateral horn T1-T2", "Dorsal motor nucleus of vagus"], "correct": 1, "explanation": "Explanation: Correct: Edinger\u2013Westphal. Review concept in lecture.", "img": "page110_img1.png"}, {"q": "The main parasympathetic supply to lacrimation travels with which nerve?", "choices": ["CN V1", "CN VII (via greater petrosal)", "CN IX", "CN X"], "correct": 1, "explanation": "Explanation: Correct: CN VII (via greater petrosal). Review concept in lecture.", "img": "page110_img10.png"}, {"q": "Which autonomic division predominantly uses norepinephrine postganglionically? (clinical scenario)", "choices": ["Parasympathetic", "Sympathetic", "Somatic", "Enteric"], "correct": 1, "explanation": "Explanation: Correct: Sympathetic. Review concept in lecture.", "img": "page110_img11.png"}, {"q": "The main parasympathetic supply to lacrimation travels with which nerve?", "choices": ["CN V1", "CN VII (via greater petrosal)", "CN IX", "CN X"], "correct": 1, "explanation": "Explanation: Correct: CN VII (via greater petrosal). Review concept in lecture.", "img": "page110_img2.png"}, {"q": "The main parasympathetic supply to lacrimation travels with which nerve? (clinical scenario)", "choices": ["CN V1", "CN VII (via greater petrosal)", "CN IX", "CN X"], "correct": 1, "explanation": "Explanation: Correct: CN VII (via greater petrosal). Review concept in lecture.", "img": "page110_img3.png"}], "brain": [{"q": "Which structure connects the two cerebral hemispheres?", "choices": ["Internal capsule", "Corpus callosum", "Fornix", "Optic chiasm"], "correct": 1, "explanation": "Explanation: Correct: Corpus callosum. Review concept in lecture.", "img": "page110_img4.png"}, {"q": "The primary visual cortex is located in which lobe?", "choices": ["Frontal", "Parietal", "Occipital", "Temporal"], "correct": 2, "explanation": "Explanation: Correct: Occipital. Review concept in lecture.", "img": "page110_img5.png"}, {"q": "Broca's area is typically in which hemisphere and lobe?", "choices": ["Left frontal", "Right frontal", "Left temporal", "Right parietal"], "correct": 0, "explanation": "Explanation: Correct: Left frontal. Review concept in lecture.", "img": "page110_img6.png"}, {"q": "Which nucleus is the parasympathetic output for pupillary constriction?", "choices": ["Superior salivatory", "Edinger\u2013Westphal", "Dorsal motor", "Nucleus ambiguus"], "correct": 1, "explanation": "Explanation: Correct: Edinger\u2013Westphal. Review concept in lecture.", "img": "page110_img7.png"}, {"q": "The cerebellum is primarily responsible for:", "choices": ["Language comprehension", "Coordination and balance", "Long-term memory", "Visual acuity"], "correct": 1, "explanation": "Explanation: Correct: Coordination and balance. Review concept in lecture.", "img": "page110_img8.png"}, {"q": "The primary visual cortex is located in which lobe? (clinical scenario)", "choices": ["Frontal", "Parietal", "Occipital", "Temporal"], "correct": 2, "explanation": "Explanation: Correct: Occipital. Review concept in lecture.", "img": "page110_img9.png"}, {"q": "Which nucleus is the parasympathetic output for pupillary constriction?", "choices": ["Superior salivatory", "Edinger\u2013Westphal", "Dorsal motor", "Nucleus ambiguus"], "correct": 1, "explanation": "Explanation: Correct: Edinger\u2013Westphal. Review concept in lecture.", "img": "page111_img1.png"}, {"q": "Which nucleus is the parasympathetic output for pupillary constriction? (clinical scenario)", "choices": ["Superior salivatory", "Edinger\u2013Westphal", "Dorsal motor", "Nucleus ambiguus"], "correct": 1, "explanation": "Explanation: Correct: Edinger\u2013Westphal. Review concept in lecture.", "img": "page111_img10.png"}, {"q": "The cerebellum is primarily responsible for:", "choices": ["Language comprehension", "Coordination and balance", "Long-term memory", "Visual acuity"], "correct": 1, "explanation": "Explanation: Correct: Coordination and balance. Review concept in lecture.", "img": "page111_img11.png"}, {"q": "Broca's area is typically in which hemisphere and lobe? (clinical scenario)", "choices": ["Left frontal", "Right frontal", "Left temporal", "Right parietal"], "correct": 0, "explanation": "Explanation: Correct: Left frontal. Review concept in lecture.", "img": "page111_img2.png"}, {"q": "The primary visual cortex is located in which lobe?", "choices": ["Frontal", "Parietal", "Occipital", "Temporal"], "correct": 2, "explanation": "Explanation: Correct: Occipital. Review concept in lecture.", "img": "page111_img3.png"}, {"q": "The primary visual cortex is located in which lobe? (clinical scenario)", "choices": ["Frontal", "Parietal", "Occipital", "Temporal"], "correct": 2, "explanation": "Explanation: Correct: Occipital. Review concept in lecture.", "img": "page111_img4.png"}, {"q": "The cerebellum is primarily responsible for:", "choices": ["Language comprehension", "Coordination and balance", "Long-term memory", "Visual acuity"], "correct": 1, "explanation": "Explanation: Correct: Coordination and balance. Review concept in lecture.", "img": "page111_img5.png"}, {"q": "Which structure connects the two cerebral hemispheres? (clinical scenario)", "choices": ["Internal capsule", "Corpus callosum", "Fornix", "Optic chiasm"], "correct": 1, "explanation": "Explanation: Correct: Corpus callosum. Review concept in lecture.", "img": "page111_img6.png"}, {"q": "Which structure connects the two cerebral hemispheres?", "choices": ["Internal capsule", "Corpus callosum", "Fornix", "Optic chiasm"], "correct": 1, "explanation": "Explanation: Correct: Corpus callosum. Review concept in lecture.", "img": "page111_img7.png"}, {"q": "The cerebellum is primarily responsible for: (clinical scenario)", "choices": ["Language comprehension", "Coordination and balance", "Long-term memory", "Visual acuity"], "correct": 1, "explanation": "Explanation: Correct: Coordination and balance. Review concept in lecture.", "img": "page111_img8.png"}, {"q": "Which nucleus is the parasympathetic output for pupillary constriction?", "choices": ["Superior salivatory", "Edinger\u2013Westphal", "Dorsal motor", "Nucleus ambiguus"], "correct": 1, "explanation": "Explanation: Correct: Edinger\u2013Westphal. Review concept in lecture.", "img": "page111_img9.png"}, {"q": "Broca's area is typically in which hemisphere and lobe? (clinical scenario)", "choices": ["Left frontal", "Right frontal", "Left temporal", "Right parietal"], "correct": 0, "explanation": "Explanation: Correct: Left frontal. Review concept in lecture.", "img": "page112_img1.png"}, {"q": "The primary visual cortex is located in which lobe?", "choices": ["Frontal", "Parietal", "Occipital", "Temporal"], "correct": 2, "explanation": "Explanation: Correct: Occipital. Review concept in lecture.", "img": "page112_img10.png"}, {"q": "The cerebellum is primarily responsible for: (clinical scenario)", "choices": ["Language comprehension", "Coordination and balance", "Long-term memory", "Visual acuity"], "correct": 1, "explanation": "Explanation: Correct: Coordination and balance. Review concept in lecture.", "img": "page112_img11.png"}], "arterial": [{"q": "Which artery supplies the lateral convexity of the cerebral hemisphere (face/hand areas)?", "choices": ["ACA", "MCA", "PCA", "External carotid"], "correct": 1, "explanation": "Explanation: Correct: MCA. Review concept in lecture.", "img": "page112_img2.png"}, {"q": "Which artery is a branch of the internal carotid and supplies the orbit?", "choices": ["Facial artery", "Ophthalmic artery", "Superior thyroid artery", "Posterior auricular"], "correct": 1, "explanation": "Explanation: Correct: Ophthalmic artery. Review concept in lecture.", "img": "page112_img3.png"}, {"q": "The vertebral arteries enter the skull through which foramen?", "choices": ["Foramen ovale", "Jugular foramen", "Foramen magnum", "Carotid canal"], "correct": 2, "explanation": "Explanation: Correct: Foramen magnum. Review concept in lecture.", "img": "page112_img4.png"}, {"q": "Which artery typically supplies the medial surface of the hemisphere (lower limb area)?", "choices": ["MCA", "ACA", "PCA", "Basilar"], "correct": 1, "explanation": "Explanation: Correct: ACA. Review concept in lecture.", "img": "page112_img5.png"}, {"q": "The Circle of Willis primarily functions to:", "choices": ["Drain venous blood", "Provide collateral arterial flow", "Supply cerebellum only", "Regulate CSF"], "correct": 1, "explanation": "Explanation: Correct: Provide collateral arterial flow. Review concept in lecture.", "img": "page112_img6.png"}, {"q": "The vertebral arteries enter the skull through which foramen? (clinical scenario)", "choices": ["Foramen ovale", "Jugular foramen", "Foramen magnum", "Carotid canal"], "correct": 2, "explanation": "Explanation: Correct: Foramen magnum. Review concept in lecture.", "img": "page112_img7.png"}, {"q": "The Circle of Willis primarily functions to:", "choices": ["Drain venous blood", "Provide collateral arterial flow", "Supply cerebellum only", "Regulate CSF"], "correct": 1, "explanation": "Explanation: Correct: Provide collateral arterial flow. Review concept in lecture.", "img": "page112_img8.png"}, {"q": "Which artery is a branch of the internal carotid and supplies the orbit? (clinical scenario)", "choices": ["Facial artery", "Ophthalmic artery", "Superior thyroid artery", "Posterior auricular"], "correct": 1, "explanation": "Explanation: Correct: Ophthalmic artery. Review concept in lecture.", "img": "page112_img9.png"}, {"q": "Which artery supplies the lateral convexity of the cerebral hemisphere (face/hand areas)?", "choices": ["ACA", "MCA", "PCA", "External carotid"], "correct": 1, "explanation": "Explanation: Correct: MCA. Review concept in lecture.", "img": "page113_img1.png"}, {"q": "Which artery is a branch of the internal carotid and supplies the orbit? (clinical scenario)", "choices": ["Facial artery", "Ophthalmic artery", "Superior thyroid artery", "Posterior auricular"], "correct": 1, "explanation": "Explanation: Correct: Ophthalmic artery. Review concept in lecture.", "img": "page113_img10.png"}, {"q": "The Circle of Willis primarily functions to:", "choices": ["Drain venous blood", "Provide collateral arterial flow", "Supply cerebellum only", "Regulate CSF"], "correct": 1, "explanation": "Explanation: Correct: Provide collateral arterial flow. Review concept in lecture.", "img": "page113_img11.png"}, {"q": "Which artery typically supplies the medial surface of the hemisphere (lower limb area)? (clinical scenario)", "choices": ["MCA", "ACA", "PCA", "Basilar"], "correct": 1, "explanation": "Explanation: Correct: ACA. Review concept in lecture.", "img": "page113_img2.png"}, {"q": "The vertebral arteries enter the skull through which foramen?", "choices": ["Foramen ovale", "Jugular foramen", "Foramen magnum", "Carotid canal"], "correct": 2, "explanation": "Explanation: Correct: Foramen magnum. Review concept in lecture.", "img": "page113_img3.png"}, {"q": "Which artery supplies the lateral convexity of the cerebral hemisphere (face/hand areas)? (clinical scenario)", "choices": ["ACA", "MCA", "PCA", "External carotid"], "correct": 1, "explanation": "Explanation: Correct: MCA. Review concept in lecture.", "img": "page113_img4.png"}, {"q": "Which artery is a branch of the internal carotid and supplies the orbit?", "choices": ["Facial artery", "Ophthalmic artery", "Superior thyroid artery", "Posterior auricular"], "correct": 1, "explanation": "Explanation: Correct: Ophthalmic artery. Review concept in lecture.", "img": "page113_img5.png"}, {"q": "Which artery supplies the lateral convexity of the cerebral hemisphere (face/hand areas)? (clinical scenario)", "choices": ["ACA", "MCA", "PCA", "External carotid"], "correct": 1, "explanation": "Explanation: Correct: MCA. Review concept in lecture.", "img": "page113_img6.png"}, {"q": "Which artery is a branch of the internal carotid and supplies the orbit?", "choices": ["Facial artery", "Ophthalmic artery", "Superior thyroid artery", "Posterior auricular"], "correct": 1, "explanation": "Explanation: Correct: Ophthalmic artery. Review concept in lecture.", "img": "page113_img7.png"}, {"q": "The vertebral arteries enter the skull through which foramen? (clinical scenario)", "choices": ["Foramen ovale", "Jugular foramen", "Foramen magnum", "Carotid canal"], "correct": 2, "explanation": "Explanation: Correct: Foramen magnum. Review concept in lecture.", "img": "page113_img8.png"}, {"q": "Which artery is a branch of the internal carotid and supplies the orbit?", "choices": ["Facial artery", "Ophthalmic artery", "Superior thyroid artery", "Posterior auricular"], "correct": 1, "explanation": "Explanation: Correct: Ophthalmic artery. Review concept in lecture.", "img": "page113_img9.png"}, {"q": "The Circle of Willis primarily functions to: (clinical scenario)", "choices": ["Drain venous blood", "Provide collateral arterial flow", "Supply cerebellum only", "Regulate CSF"], "correct": 1, "explanation": "Explanation: Correct: Provide collateral arterial flow. Review concept in lecture.", "img": "page114_img1.png"}]};
+function openImage(src){
+  const w = window.open('','_blank');
+  w.document.write('<img src="' + src + '" style="max-width:100%;">');
 }
-
-function buildQuiz(){
-  const area = document.getElementById('quizArea');
-  area.innerHTML = '';
-  quizData.forEach((_,i)=> area.appendChild(renderQuestion(i)));
-  // Attach listeners
-  quizData.forEach((_,i)=>{
-    const radios = document.getElementsByName('q'+i);
-    radios.forEach(r=>{
-      r.addEventListener('change', ()=> {
-        state.answers[i] = parseInt(r.value);
-        document.getElementById('your-'+i).textContent = quizData[i].choices[state.answers[i]];
-      });
-    });
+function buildTopic(topic){ 
+  const data = topicData[topic]; 
+  const area = document.getElementById('quizArea'); area.innerHTML='';
+  data.forEach((it,i)=>{
+    const card = document.createElement('div'); card.className='card';
+    card.innerHTML = `<div style="font-weight:700">Q${i+1}. ${it.q}</div>
+      <div style="margin-top:6px"><img src="/mnt/data/extracted_images/${it.img}" style="max-width:360px;cursor:pointer" onclick="openImage(this.src)"></div>
+      <div style="margin-top:8px">${it.choices.map((c,idx)=>`<label id="lab-${topic}-${i}-${idx}"><input type="radio" name="${topic}-${i}" value="${idx}"> ${c}</label>`).join('')}</div>
+      <div style="margin-top:6px"><button onclick="checkAnswer('${topic}',${i})">Check Answer</button> <span id="sel-${topic}-${i}">Your answer: —</span></div>
+      <div class="explanation" id="exp-${topic}-${i}"><strong>Explanation:</strong><div id="exptext-${topic}-${i}"></div></div>`;
+    area.appendChild(card);
   });
-
-  area.addEventListener('click', (e)=>{
-    const btn = e.target.closest('button[data-action="check"]');
-    if(btn){
-      const idx = parseInt(btn.dataset.i);
-      checkAnswer(idx);
-    }
-  });
-
-  updateScoreDisplay();
 }
-
-function checkAnswer(i){
-  const sel = state.answers[i];
-  const exp = document.getElementById('exp-'+i);
-  const expText = document.getElementById('exp-text-'+i);
-  // visual reset
-  quizData[i].choices.forEach((_,j)=>{
-    const lab = document.getElementById(`label-${i}-${j}`);
+function checkAnswer(topic,i){
+  const data = topicData[topic][i];
+  const radios = document.getElementsByName(`${topic}-${i}`);
+  let sel = null;
+  radios.forEach(r=>{ if(r.checked) sel = parseInt(r.value); });
+  if(sel===null){ alert('Please select an answer'); return; }
+  document.getElementById(`sel-${topic}-${i}`).textContent = 'Your answer: ' + data.choices[sel];
+  data.choices.forEach((c,idx)=>{
+    const lab = document.getElementById(`lab-${topic}-${i}-${idx}`);
     lab.classList.remove('correct','incorrect');
+    if(idx === data.correct) lab.classList.add('correct');
+    if(idx === sel && sel !== data.correct) lab.classList.add('incorrect');
   });
-
-  if(sel === null){
-    alert('Please select an answer for Question ' + (i+1));
-    return;
-  }
-  const isCorrect = sel === quizData[i].correct;
-  // mark labels
-  quizData[i].choices.forEach((_,j)=>{
-    const lab = document.getElementById(`label-${i}-${j}`);
-    if(j === quizData[i].correct) lab.classList.add('correct');
-    if(j === sel && !isCorrect) lab.classList.add('incorrect');
-  });
-
-  expText.textContent = quizData[i].explanation;
-  exp.style.display = 'block';
-
-  updateScoreDisplay();
-  saveProgress();
+  document.getElementById(`exptext-${topic}-${i}`).textContent = data.explanation;
+  document.getElementById(`exp-${topic}-${i}`).style.display = 'block';
+  // score tracking per topic in localStorage
+  const key = 'score_' + topic;
+  const stored = JSON.parse(localStorage.getItem(key) || '{}');
+  stored['q'+i] = (sel === data.correct) ? 1 : 0;
+  localStorage.setItem(key, JSON.stringify(stored));
 }
-
-function updateScoreDisplay(){
-  let score = 0;
-  for(let i=0;i<quizData.length;i++){
-    if(state.answers[i] === quizData[i].correct) score++;
-  }
-  document.getElementById('scoreDisplay').textContent = score;
-  const best = parseInt(localStorage.getItem('optometry_best')||'0',10);
-  if(score > best){
-    localStorage.setItem('optometry_best', score);
-    document.getElementById('bestDisplay').textContent = score;
-  } else {
-    document.getElementById('bestDisplay').textContent = best;
-  }
-}
-
-function saveProgress(){
-  const payload = {
-    answers: state.answers,
-    timestamp: Date.now()
-  };
-  localStorage.setItem('optometry_quiz_progress', JSON.stringify(payload));
-  // store attempt log
-  const log = JSON.parse(localStorage.getItem('optometry_attempts')||'[]');
-  log.push({time: Date.now(), score: getCurrentScore()});
-  localStorage.setItem('optometry_attempts', JSON.stringify(log));
-}
-
-function loadProgress(){
-  const p = JSON.parse(localStorage.getItem('optometry_quiz_progress')||'null');
-  if(p && p.answers){
-    state.answers = p.answers;
-    state.answers.forEach((ans,i)=>{
-      if(ans !== null){
-        const r = document.querySelector(`input[name="q${i}"][value="${ans}"]`);
-        if(r) r.checked = true;
-        const y = document.getElementById('your-'+i);
-        if(y) y.textContent = quizData[i].choices[ans];
-        // show explanation if previously checked (we'll show all explanations by default for loaded state)
-        document.getElementById('exp-text-'+i).textContent = quizData[i].explanation;
-        document.getElementById('exp-'+i).style.display = 'block';
-        // mark correct/incorrect
-        quizData[i].choices.forEach((_,j)=>{
-          const lab = document.getElementById(`label-${i}-${j}`);
-          if(j === quizData[i].correct) lab.classList.add('correct');
-          if(j === ans && ans !== quizData[i].correct) lab.classList.add('incorrect');
-        });
-      }
-    });
-  }
-  updateScoreDisplay();
-}
-
-function getCurrentScore(){
-  let s = 0;
-  for(let i=0;i<quizData.length;i++){
-    if(state.answers[i] === quizData[i].correct) s++;
-  }
-  return s;
-}
-
-/* Review page builder */
 function showReview(){
-  const area = document.getElementById('reviewList');
-  area.innerHTML = '';
-  quizData.forEach((item,i)=>{
-    const chosen = state.answers[i];
-    const tr = document.createElement('div');
-    tr.className = 'card';
-    tr.innerHTML = `
-      <div style="font-weight:700">Q${i+1}. ${item.q}</div>
-      <div style="margin-top:6px">Correct answer: <strong>${item.choices[item.correct]}</strong></div>
-      <div>Your answer: <strong>${chosen===null? '—' : item.choices[chosen]}</strong></div>
-      <div style="margin-top:6px"><em>Explanation:</em> ${item.explanation}</div>
-    `;
-    area.appendChild(tr);
-  });
-  document.getElementById('reviewArea').classList.remove('hidden');
-  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
-}
-
-/* Progress */
-function showProgress(){
-  const log = JSON.parse(localStorage.getItem('optometry_attempts')||'[]');
-  const info = document.getElementById('progressInfo');
-  if(log.length===0){
-    info.innerHTML = '<div>No saved attempts yet. Complete and save a quiz to track progress.</div>';
-  } else {
-    let html = '<table><thead><tr><th>#</th><th>Timestamp</th><th>Score</th></tr></thead><tbody>';
-    log.slice(-20).reverse().forEach((entry,idx)=>{
-      const d = new Date(entry.time);
-      html += `<tr><td>${log.length - idx}</td><td>${d.toLocaleString()}</td><td>${entry.score} / ${quizData.length}</td></tr>`;
+  const area = document.getElementById('reviewArea'); area.style.display='block';
+  let html = '<h2>Review — All Topics</h2>';
+  for(const t in topicData){
+    html += `<h3>${t.toUpperCase()}</h3>`;
+    topicData[t].forEach((it,i)=>{
+      const key = 'score_' + t;
+      const stored = JSON.parse(localStorage.getItem(key) || '{}');
+      const your = (stored['q'+i] === undefined) ? '—' : (stored['q'+i] ? 'Correct' : 'Incorrect');
+      html += `<div class="card"><div style="font-weight:700">Q${i+1}. ${it.q}</div>
+        <div style="margin-top:6px"><img src="/mnt/data/extracted_images/${it.img}" style="max-width:240px"></div>
+        <div style="margin-top:6px">Correct answer: <strong>${it.choices[it.correct]}</strong></div>
+        <div>Your result: <strong>${your}</strong></div>
+        <div style="margin-top:6px"><em>Explanation:</em> ${it.explanation}</div></div>`;
     });
-    html += '</tbody></table>';
-    info.innerHTML = html;
   }
-  document.getElementById('progressArea').classList.remove('hidden');
-  window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'});
+  area.innerHTML = html;
+  window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'});
 }
-
-/* Event wiring for top buttons */
-document.getElementById('startBtn').addEventListener('click', ()=>{
-  if(confirm('Start/reset quiz? This will clear saved answers for this session.')){
-    state.answers = Array(total).fill(null);
-    localStorage.removeItem('optometry_quiz_progress');
-    buildQuiz();
-  }
-});
-document.getElementById('reviewBtn').addEventListener('click', showReview);
-document.getElementById('showProgressBtn').addEventListener('click', showProgress);
-
-/* Initialize quiz on page load */
-buildQuiz();
-setTimeout(loadProgress, 200); // load any saved state
-</script>
-</body>
-</html>
+// initial load
+buildTopic('division');
+</script></body></html>

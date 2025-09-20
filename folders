@@ -1,0 +1,12 @@
+/head-neck/
+  └── exam1/
+        ├── lecture1.html
+        ├── lecture2.html
+        └── resources.html
+  └── exam2/
+        ├── lecture1.html
+        └── resources.html
+/ocular/
+  └── exam1/
+        ├── lecture1.html
+        └── resources.html

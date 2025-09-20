@@ -1,6 +1,9 @@
 /head-neck/
   └── exam1/
-        ├── lecture3.html
+          └── lecture3/
+              ├── index.html
+              ├── quiz1.html
+              └── quiz2.html
         ├── lecture4.html
         ├── lecture5.html
         └── resources.html

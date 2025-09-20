@@ -74,181 +74,165 @@
   </div>
   <div id="score"></div>
   <div id="review"></div>
+<script>
+const questions = [
+  // 🧩 Division of the Nervous System
+  {
+    question: "Which part of the nervous system includes the brain and spinal cord?",
+    choices: ["Peripheral Nervous System", "Autonomic Nervous System", "Central Nervous System", "Somatic Nervous System"],
+    correct: 2,
+    explanation: "The CNS includes the brain and spinal cord, responsible for processing and integrating information."
+  },
+  {
+    question: "Afferent neurons carry signals:",
+    choices: ["From the CNS to muscles", "From muscles to the CNS", "Between interneurons", "From the brain to the spinal cord"],
+    correct: 1,
+    explanation: "Afferent neurons carry sensory signals from the body to the CNS."
+  },
+  {
+    question: "Which of the following is part of the peripheral nervous system?",
+    choices: ["Spinal cord", "Cerebral cortex", "Cranial nerves", "Basal ganglia"],
+    correct: 2,
+    explanation: "Cranial nerves are part of the PNS, while the others are central structures."
+  },
+  {
+    question: "The somatic nervous system primarily controls:",
+    choices: ["Smooth muscle", "Cardiac muscle", "Glands", "Skeletal muscle"],
+    correct: 3,
+    explanation: "The somatic nervous system controls voluntary movements via skeletal muscle."
+  },
+  {
+    question: "Which structure acts as a relay station between sensory input and the cerebral cortex?",
+    choices: ["Cerebellum", "Thalamus", "Medulla", "Pons"],
+    correct: 1,
+    explanation: "The thalamus relays sensory signals to the appropriate cortical areas."
+  },
+  {
+    question: "Which division of the nervous system is responsible for involuntary control of internal organs?",
+    choices: ["Somatic", "Central", "Autonomic", "Peripheral"],
+    correct: 2,
+    explanation: "The autonomic nervous system regulates involuntary functions like heart rate and digestion."
+  },
+  {
+    question: "Which cells form the myelin sheath in the central nervous system?",
+    choices: ["Schwann cells", "Astrocytes", "Oligodendrocytes", "Microglia"],
+    correct: 2,
+    explanation: "Oligodendrocytes myelinate axons in the CNS, while Schwann cells do so in the PNS."
+  },
+  {
+    question: "Which of the following best describes the function of interneurons?",
+    choices: ["Transmit signals from sensory organs to the brain", "Connect motor neurons to muscles", "Relay signals between sensory and motor neurons", "Carry signals from the brain to the spinal cord"],
+    correct: 2,
+    explanation: "Interneurons serve as connectors between sensory and motor pathways within the CNS."
+  },
+  {
+    question: "Which part of the brain is primarily responsible for coordination and balance?",
+    choices: ["Cerebrum", "Brainstem", "Cerebellum", "Thalamus"],
+    correct: 2,
+    explanation: "The cerebellum integrates sensory input to fine-tune motor activity and maintain balance."
+  },
+  {
+    question: "Damage to the spinal cord would most directly affect which function?",
+    choices: ["Visual processing", "Voluntary movement", "Hormone secretion", "Language comprehension"],
+    correct: 1,
+    explanation: "The spinal cord transmits motor signals from the brain to the body; damage impairs movement."
+  },
 
-  <script>
-    const questions = [/* FULL QUESTION ARRAY GOES HERE */];
+  // 🔄 Autonomic Nervous System
+  {
+    question: "Which division of the autonomic nervous system is responsible for 'rest and digest' functions?",
+    choices: ["Sympathetic", "Parasympathetic", "Somatic", "Central"],
+    correct: 1,
+    explanation: "The parasympathetic division promotes digestion, salivation, and relaxation."
+  },
+  {
+    question: "Which neurotransmitter is released by preganglionic neurons in both sympathetic and parasympathetic systems?",
+    choices: ["Dopamine", "Norepinephrine", "Acetylcholine", "Serotonin"],
+    correct: 2,
+    explanation: "Acetylcholine is released by all preganglionic autonomic neurons."
+  },
+  {
+    question: "The sympathetic nervous system originates from which spinal segments?",
+    choices: ["Cervical", "Thoracolumbar", "Sacral", "Craniosacral"],
+    correct: 1,
+    explanation: "Sympathetic fibers arise from thoracic and lumbar spinal segments (T1–L2)."
+  },
+  {
+    question: "Which structure contains postganglionic sympathetic neurons?",
+    choices: ["Dorsal root ganglion", "Sympathetic chain ganglia", "Cerebral cortex", "Vagus nerve"],
+    correct: 1,
+    explanation: "Sympathetic chain ganglia house postganglionic sympathetic neurons."
+  },
+  {
+    question: "Which cranial nerve carries parasympathetic fibers to thoracic and abdominal organs?",
+    choices: ["CN III", "CN V", "CN VII", "CN X"],
+    correct: 3,
+    explanation: "The vagus nerve (CN X) provides parasympathetic innervation to most visceral organs."
+  },
+  {
+    question: "Which effect is typically caused by sympathetic activation?",
+    choices: ["Pupil constriction", "Decreased heart rate", "Bronchoconstriction", "Increased blood pressure"],
+    correct: 3,
+    explanation: "Sympathetic stimulation increases heart rate and blood pressure, and dilates bronchi."
+  },
+  {
+    question: "Parasympathetic stimulation of the eye causes:",
+    choices: ["Pupil dilation", "Lens flattening", "Pupil constriction", "Increased intraocular pressure"],
+    correct: 2,
+    explanation: "Parasympathetic input constricts the pupil and allows lens accommodation for near vision."
+  },
+  {
+    question: "Which ganglia are associated with parasympathetic innervation of the eye?",
+    choices: ["Ciliary ganglion", "Otic ganglion", "Pterygopalatine ganglion", "Superior cervical ganglion"],
+    correct: 0,
+    explanation: "The ciliary ganglion relays parasympathetic fibers to the sphincter pupillae and ciliary muscles."
+  },
+  {
+    question: "Which of the following is a function of the enteric nervous system?",
+    choices: ["Regulating blood pressure", "Controlling skeletal muscle", "Coordinating digestion", "Modulating pain perception"],
+    correct: 2,
+    explanation: "The enteric nervous system governs gastrointestinal motility and secretion."
+  },
+  {
+    question: "Beta-blockers reduce sympathetic activity by blocking receptors for:",
+    choices: ["Acetylcholine", "Dopamine", "Norepinephrine", "Serotonin"],
+    correct: 2,
+    explanation: "Beta-blockers inhibit norepinephrine binding to beta-adrenergic receptors, lowering heart rate."
+  },
 
-    let current = 0;
-    let score = 0;
-    const userAnswers = Array(questions.length).fill(null);
-
-    function startQuiz() {
-      document.getElementById("start").style.display = "none";
-      document.getElementById("quiz").style.display = "block";
-      document.getElementById("navigation").style.display = "block";
-      loadQuestion();
-    }
-
-    function loadQuestion() {
-      const q = questions[current];
-      const quizDiv = document.getElementById("quiz");
-      quizDiv.innerHTML = `
-        <div class="question">
-          <h3>Q${current + 1}: ${q.question}</h3>
-          <div class="choices">
-            ${q.choices.map((choice, i) => {
-              const selected = userAnswers[current] === i;
-              const correct = i === q.correct;
-              const className = selected ? (correct ? "correct" : "incorrect") : "";
-              return `<button class="${className}" onclick="checkAnswer(${i})">${choice}</button>`;
-            }).join("")}
-          </div>
-          <div class="feedback" id="feedback">${userAnswers[current] !== null ? getFeedback(current) : ""}</div>
-        </div>
-      `;
-    }
-
-    function checkAnswer(selected) {
-      if (userAnswers[current] === null) {
-        userAnswers[current] = selected;
-        if (selected === questions[current].correct) score++;
-      }
-      loadQuestion();
-    }
-
-    function getFeedback(index) {
-      const selected = userAnswers[index];
-      const correct = questions[index].correct;
-      return selected === correct
-        ? "✅ Correct!"
-        : `❌ Incorrect. ${questions[index].explanation}`;
-    }
-
-    function nextQuestion() {
-      if (current < questions.length - 1) {
-        current++;
-        loadQuestion();
-      } else {
-        showReview();
-      }
-    }
-
-    function prevQuestion() {
-      if (current > 0) {
-        current--;
-        loadQuestion();
-      }
-    }
-
-    function showReview() {
-      document.getElementById("quiz").style.display = "none";
-      document.getElementById("navigation").style.display = "none";
-      document.getElementById("score").innerHTML = `Your score: ${score} / ${questions.length}`;
-      const reviewDiv = document.getElementById("review");
-      reviewDiv.style.display = "block";
-      reviewDiv.innerHTML = "<h2>Review</h2>" + questions.map((q, i) => `
-        <div>
-          <strong>Q${i + 1}: ${q.question}</strong><br>
-          Your answer: ${q.choices[userAnswers[i] ?? "No answer"]}<br>
-          Correct answer: ${q.choices[q.correct]}<br>
-          ${userAnswers[i] === q.correct ? "✅ Correct" : "❌ Incorrect"}<br>
-          Explanation: ${q.explanation}
-        </div><hr>
-      `).join("");
-    }
-  </script>
-</body>
-</html>
-<h2>🧩 Division of the Nervous System</h2>
-
-<div class="question">
-  <p><strong>Q1. Which part of the nervous system includes the brain and spinal cord?</strong></p>
-  <label><input type="radio" name="q1"> Peripheral Nervous System</label><br>
-  <label><input type="radio" name="q1"> Autonomic Nervous System</label><br>
-  <label><input type="radio" name="q1"> Central Nervous System</label><br>
-  <label><input type="radio" name="q1"> Somatic Nervous System</label><br>
-  <p><em>Explanation: The CNS includes the brain and spinal cord, responsible for processing and integrating information.</em></p>
-</div>
-
-<div class="question">
-  <p><strong>Q2. Afferent neurons carry signals:</strong></p>
-  <label><input type="radio" name="q2"> From the CNS to muscles</label><br>
-  <label><input type="radio" name="q2"> From muscles to the CNS</label><br>
-  <label><input type="radio" name="q2"> Between interneurons</label><br>
-  <label><input type="radio" name="q2"> From the brain to the spinal cord</label><br>
-  <p><em>Explanation: Afferent neurons carry sensory signals from the body to the CNS.</em></p>
-</div>
-
-<div class="question">
-  <p><strong>Q3. Which of the following is part of the peripheral nervous system?</strong></p>
-  <label><input type="radio" name="q3"> Spinal cord</label><br>
-  <label><input type="radio" name="q3"> Cerebral cortex</label><br>
-  <label><input type="radio" name="q3"> Cranial nerves</label><br>
-  <label><input type="radio" name="q3"> Basal ganglia</label><br>
-  <p><em>Explanation: Cranial nerves are part of the PNS, while the others are central structures.</em></p>
-</div>
-
-<div class="question">
-  <p><strong>Q4. The somatic nervous system primarily controls:</strong></p>
-  <label><input type="radio" name="q4"> Smooth muscle</label><br>
-  <label><input type="radio" name="q4"> Cardiac muscle</label><br>
-  <label><input type="radio" name="q4"> Glands</label><br>
-  <label><input type="radio" name="q4"> Skeletal muscle</label><br>
-  <p><em>Explanation: The somatic nervous system controls voluntary movements via skeletal muscle.</em></p>
-</div>
-
-<div class="question">
-  <p><strong>Q5. Which structure acts as a relay station between sensory input and the cerebral cortex?</strong></p>
-  <label><input type="radio" name="q5"> Cerebellum</label><br>
-  <label><input type="radio" name="q5"> Thalamus</label><br>
-  <label><input type="radio" name="q5"> Medulla</label><br>
-  <label><input type="radio" name="q5"> Pons</label><br>
-  <p><em>Explanation: The thalamus relays sensory signals to the appropriate cortical areas.</em></p>
-</div>
-
-<div class="question">
-  <p><strong>Q6. Which division of the nervous system is responsible for involuntary control of internal organs?</strong></p>
-  <label><input type="radio" name="q6"> Somatic</label><br>
-  <label><input type="radio" name="q6"> Central</label><br>
-  <label><input type="radio" name="q6"> Autonomic</label><br>
-  <label><input type="radio" name="q6"> Peripheral</label><br>
-  <p><em>Explanation: The autonomic nervous system regulates involuntary functions like heart rate and digestion.</em></p>
-</div>
-
-<div class="question">
-  <p><strong>Q7. Which cells form the myelin sheath in the central nervous system?</strong></p>
-  <label><input type="radio" name="q7"> Schwann cells</label><br>
-  <label><input type="radio" name="q7"> Astrocytes</label><br>
-  <label><input type="radio" name="q7"> Oligodendrocytes</label><br>
-  <label><input type="radio" name="q7"> Microglia</label><br>
-  <p><em>Explanation: Oligodendrocytes myelinate axons in the CNS, while Schwann cells do so in the PNS.</em></p>
-</div>
-
-<div class="question">
-  <p><strong>Q8. Which of the following best describes the function of interneurons?</strong></p>
-  <label><input type="radio" name="q8"> Transmit signals from sensory organs to the brain</label><br>
-  <label><input type="radio" name="q8"> Connect motor neurons to muscles</label><br>
-  <label><input type="radio" name="q8"> Relay signals between sensory and motor neurons</label><br>
-  <label><input type="radio" name="q8"> Carry signals from the brain to the spinal cord</label><br>
-  <p><em>Explanation: Interneurons serve as connectors between sensory and motor pathways within the CNS.</em></p>
-</div>
-
-<div class="question">
-  <p><strong>Q9. Which part of the brain is primarily responsible for coordination and balance?</strong></p>
-  <label><input type="radio" name="q9"> Cerebrum</label><br>
-  <label><input type="radio" name="q9"> Brainstem</label><br>
-  <label><input type="radio" name="q9"> Cerebellum</label><br>
-  <label><input type="radio" name="q9"> Thalamus</label><br>
-  <p><em>Explanation: The cerebellum integrates sensory input to fine-tune motor activity and maintain balance.</em></p>
-</div>
-
-<div class="question">
-  <p><strong>Q10. Damage to the spinal cord would most directly affect which function?</strong></p>
-  <label><input type="radio" name="q10"> Visual processing</label><br>
-  <label><input type="radio" name="q10"> Voluntary movement</label><br>
-  <label><input type="radio" name="q10"> Hormone secretion</label><br>
-  <label><input type="radio" name="q10"> Language comprehension</label><br>
-  <p><em>Explanation: The spinal cord transmits motor signals from the brain to the body; damage impairs movement.</em></p>
-</div>
-
-
+  // 🧠 Parts of the Brain
+  {
+    question: "Which lobe of the brain is primarily responsible for visual processing?",
+    choices: ["Frontal lobe", "Temporal lobe", "Occipital lobe", "Parietal lobe"],
+    correct: 2,
+    explanation: "The occipital lobe contains the primary visual cortex and processes visual information."
+  },
+  {
+    question: "Damage to Broca’s area typically results in:",
+    choices: ["Fluent aphasia", "Non-fluent aphasia", "Visual agnosia", "Auditory hallucinations"],
+    correct: 1,
+    explanation: "Broca’s area controls speech production; damage causes non-fluent aphasia."
+  },
+  {
+    question: "Which part of the brain regulates vital functions like breathing and heart rate?",
+    choices: ["Cerebellum", "Medulla oblongata", "Thalamus", "Corpus callosum"],
+    correct: 1,
+    explanation: "The medulla oblongata controls autonomic functions such as respiration and cardiac rhythm."
+  },
+  {
+    question: "The corpus callosum connects which two structures?",
+    choices: ["Brainstem and cerebellum", "Left and right cerebral hemispheres", "Frontal and occipital lobes", "Thalamus and hypothalamus"],
+    correct: 1,
+    explanation: "The corpus callosum is a bundle of nerve fibers connecting the two cerebral hemispheres."
+  },
+  {
+    question: "Which brain structure is involved in coordination and fine motor control?",
+    choices: ["Cerebrum", "Cerebellum", "Pons", "Amygdala"],
+    correct: 1,
+    explanation: "The cerebellum integrates sensory input to coordinate movement and balance."
+  },
+  {
+    question: "Which lobe of the brain is associated with decision-making and personality?",
+    choices: ["Occipital", "Temporal", "Frontal", "Parietal"],
+    correct: 2,
+    explanation: "The frontal lobe governs executive functions,
